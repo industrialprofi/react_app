@@ -9,18 +9,36 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Semantic palette driven by CSS variables
+        border: "var(--border)",
+        input: "var(--input)",
+        ring: "var(--ring)",
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+
         primary: {
-          DEFAULT: "var(--primary-color)",
-          hover: "var(--primary-hover)",
+          DEFAULT: "var(--primary)",
+          foreground: "var(--primary-foreground)",
         },
-        text: {
-          DEFAULT: "var(--text-color)",
-          light: "var(--text-light)",
+        secondary: {
+          DEFAULT: "var(--secondary)",
+          foreground: "var(--secondary-foreground)",
         },
-        background: {
-          DEFAULT: "var(--background)",
-          light: "var(--background-light)",
-          dark: "var(--background-dark)",
+        muted: {
+          DEFAULT: "var(--muted)",
+          foreground: "var(--muted-foreground)",
+        },
+        accent: {
+          DEFAULT: "var(--accent)",
+          foreground: "var(--accent-foreground)",
+        },
+        destructive: {
+          DEFAULT: "var(--destructive)",
+          foreground: "var(--destructive-foreground)",
+        },
+        card: {
+          DEFAULT: "var(--card)",
+          foreground: "var(--card-foreground)",
         },
       },
     },

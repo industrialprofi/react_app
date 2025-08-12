@@ -26,7 +26,7 @@ export function Navigation({ items, className }: NavigationProps) {
           <Link
             key={item.href}
             href={item.href}
-            className="text-gray-700 hover:text-[#2563eb] font-medium transition-colors"
+            className="text-foreground/80 hover:text-primary font-medium transition-colors"
           >
             {item.label}
           </Link>
@@ -37,20 +37,20 @@ export function Navigation({ items, className }: NavigationProps) {
       <div className="md:hidden">
         <button 
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="p-2 text-gray-700 hover:text-[#2563eb] transition-colors rounded-md focus:outline-none focus:ring-2 focus:ring-[#2563eb]/50"
+          className="p-2 text-foreground/80 hover:text-primary transition-colors rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
           aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}
         >
           {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
 
         {isMenuOpen && (
-          <div className="absolute top-16 left-0 right-0 bg-white p-4 shadow-lg border-t border-gray-100 z-50 animate-fadeIn">
+          <div className="absolute top-16 left-0 right-0 bg-background p-4 shadow-lg border-t border-border z-50 animate-fadeIn">
             <nav className="flex flex-col space-y-4 container mx-auto px-4">
               {items.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="text-gray-700 hover:text-[#2563eb] font-medium transition-colors text-lg py-2 border-b border-gray-50 last:border-b-0"
+                  className="text-foreground/80 hover:text-primary font-medium transition-colors text-lg py-2 border-b border-border/50 last:border-b-0"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.label}

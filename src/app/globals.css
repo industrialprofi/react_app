@@ -3,11 +3,37 @@
 @tailwind utilities;
 
 :root {
-  --primary-color: #2563eb;
-  --primary-hover: #1d4ed8;
-  --text-color: #171717;
-  --text-light: #6b7280;
+  /* Semantic design tokens */
   --background: #ffffff;
+  --foreground: #171717; /* was text-color */
+
+  --muted: #f3f4f6; /* gray-100 */
+  --muted-foreground: #6b7280; /* gray-500 (was text-light) */
+
+  --card: #ffffff;
+  --card-foreground: #171717;
+
+  --border: #e5e7eb; /* gray-200 */
+  --input: #e5e7eb;  /* same as border */
+  --ring: #2563eb;
+
+  --primary: #2563eb;       /* was primary-color */
+  --primary-foreground: #ffffff;
+
+  --secondary: #f3f4f6;
+  --secondary-foreground: #111827; /* gray-900 */
+
+  --accent: #eef2ff; /* indigo-50 */
+  --accent-foreground: #1f2937; /* gray-800 */
+
+  --destructive: #ef4444; /* red-500 */
+  --destructive-foreground: #ffffff;
+
+  /* Legacy aliases to avoid breakage */
+  --primary-color: var(--primary);
+  --primary-hover: #1d4ed8;
+  --text-color: var(--foreground);
+  --text-light: var(--muted-foreground);
   --background-light: #f9fafb;
   --background-dark: #f3f4f6;
 }
@@ -17,7 +43,7 @@ html {
 }
 
 body {
-  color: var(--text-color);
+  color: var(--foreground);
   background-color: var(--background);
   font-feature-settings: "rlig" 1, "calt" 1;
 }
