@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { AnimatedSection } from "../ui/animated-section";
 

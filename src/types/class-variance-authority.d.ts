@@ -1,5 +1,6 @@
 declare module 'class-variance-authority' {
-  export type VariantProps<T extends (...args: any) => any> = Omit<
+  // Использование unknown вместо any для типобезопасности
+  export type VariantProps<T extends (...args: unknown[]) => unknown> = Omit<
     Parameters<T>[0],
     'className' | 'style'
   >;
@@ -18,6 +19,6 @@ declare module 'class-variance-authority' {
     }
   ): (props?: {
     className?: string;
-    [key: string]: any;
+    [key: string]: unknown; // Использование unknown вместо any
   }) => string;
 }
