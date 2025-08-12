@@ -18,7 +18,7 @@ export function Features() {
     <section className="bg-gray-50 py-16 px-4">
       <div className="container mx-auto text-center max-w-4xl">
         <h2 className="text-3xl md:text-4xl font-bold text-black mb-12">
-          Aithor может помочь вам с
+          DreamTeamSAAS может помочь вам с
         </h2>
         
         <div className="flex flex-wrap justify-center gap-2 mb-12">

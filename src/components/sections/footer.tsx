@@ -13,7 +13,7 @@ const footerSections = {
     "Поддержка"
   ],
   resources: [
-    "Как использовать Aithor",
+    "Как использовать DreamTeamSAAS",
     "Блог",
     "Примеры",
     "Генератор",
@@ -52,7 +52,7 @@ export function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="font-bold text-xl mb-4 text-white">Aithor</h3>
+            <h3 className="font-bold text-xl mb-4 text-white">DreamTeamSAAS</h3>
             <p className="text-gray-400 mb-4 text-sm">
               Сеть для создания исследований и письма с помощью ИИ
             </p>
@@ -116,7 +116,7 @@ export function Footer() {
             <Link href="#" className="hover:text-white">Условия использования</Link>
             <Link href="#" className="hover:text-white">Политика конфиденциальности</Link>
           </div>
-          <p>&copy; Aithor 2024</p>
+          <p>&copy; DreamTeamSAAS 2024</p>
         </div>
       </div>
     </footer>

@@ -15,7 +15,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Aithor - ИИ помощник для написания эссе",
+  title: "DreamTeamSAAS - ИИ помощник для написания эссе",
   description: "Ваше эссе — написано на 90% быстрее с помощью ИИ. Быстрая структура, проверка оригинальности, бесплатные источники с PDF.",
 };
 
