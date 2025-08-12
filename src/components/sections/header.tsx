@@ -13,9 +13,9 @@ const navItems = [
 
 export function Header() {
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md z-50 py-3 sm:py-4 border-b border-gray-100">
+    <header className="fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-md z-50 py-3 sm:py-4 border-b border-border shadow-sm">
       <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link href="/" className="font-bold text-xl sm:text-2xl text-[#2563eb]">
+        <Link href="/" className="font-bold text-xl sm:text-2xl text-primary hover:text-[var(--primary-hover)] transition-colors">
           TextAI
         </Link>
         

@@ -16,7 +16,7 @@ export function Hero() {
             </AnimatedSection>
             
             <AnimatedSection direction="up" delay={0.2}>
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-lg mx-auto lg:mx-0">
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-lg mx-auto lg:mx-0">
                 Создавайте уникальные, качественные и разнообразные тексты за секунды без лишних усилий
               </p>
             </AnimatedSection>
@@ -35,19 +35,19 @@ export function Hero() {
           
           <AnimatedSection direction="left" delay={0.4} className="w-full lg:w-1/2">
             <div className="relative">
-              <div className="w-full h-full bg-gradient-to-tr from-[#2563eb]/80 to-[#7c3aed]/80 absolute rounded-full blur-2xl opacity-20 -z-10"></div>
-              <div className="relative bg-white rounded-2xl shadow-xl p-4 md:p-8 border border-gray-200">
-                <div className="bg-gradient-to-r from-[#2563eb]/10 to-[#7c3aed]/10 rounded-xl p-4 md:p-6">
+              <div className="w-full h-full bg-gradient-to-tr from-primary/60 to-accent/60 absolute rounded-full blur-3xl opacity-20 -z-10"></div>
+              <div className="relative bg-card rounded-2xl shadow-xl p-4 md:p-8 border border-border">
+                <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-4 md:p-6 border border-border/50">
                   <div className="space-y-4 font-mono text-sm sm:text-base">
                     <p>
-                      <span className="text-[#2563eb] font-semibold">&gt;</span> Здравствуйте! Я текстовый ассистент на базе искусственного интеллекта.
+                      <span className="text-primary font-semibold">&gt;</span> <span className="text-foreground">Здравствуйте! Я текстовый ассистент на базе искусственного интеллекта.</span>
                     </p>
                     <p>
-                      <span className="text-[#2563eb] font-semibold">&gt;</span> Чем могу помочь? Я умею писать тексты любого формата: от коротких описаний до полноценных статей.
+                      <span className="text-primary font-semibold">&gt;</span> <span className="text-foreground">Чем могу помочь? Я умею писать тексты любого формата: от коротких описаний до полноценных статей.</span>
                     </p>
                     <p className="flex items-center">
-                      <span className="text-[#2563eb] font-semibold mr-1 animate-pulse">&gt;</span> 
-                      <span className="block animate-pulse">Введите запрос...</span>
+                      <span className="text-accent font-semibold mr-1 animate-pulse">&gt;</span> 
+                      <span className="block animate-pulse text-muted-foreground">Введите запрос...</span>
                     </p>
                   </div>
                 </div>
