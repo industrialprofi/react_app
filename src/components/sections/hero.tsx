@@ -1,9 +1,23 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "../ui/button";
 import { Check } from "lucide-react";
 
 export function Hero() {
+  const [textareaValue, setTextareaValue] = useState("Роль социальных сетей в современном обществе");
+
+  const suggestedTopics = [
+    "Анализ темы мести в \"Гамлете\" Шекспира",
+    "Влияние COVID-19 на психическое здоровье родителей", 
+    "Факторы, влияющие на компенсационные стратегии и практики компаний",
+    "Роль социальных сетей в современном обществе",
+    "Этические соображения в создании информированного согласия для исследовательского участия"
+  ];
+
+  const handleTopicClick = (topic: string) => {
+    setTextareaValue(topic);
+  };
   return (
     <section className="bg-white py-16 px-4">
       <div className="container mx-auto text-center max-w-4xl">
@@ -14,23 +28,23 @@ export function Hero() {
         <div className="flex flex-wrap justify-center gap-6 mb-8 text-sm">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <span>Быстрая структура</span>
+            <span className="text-gray-700">Быстрая структура</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <span>Проверка оригинальности</span>
+            <span className="text-gray-700">Проверка оригинальности</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <span>100% бесплатные источники с PDF</span>
+            <span className="text-gray-700">100% бесплатные источники с PDF</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <span>Автоматический список литературы</span>
+            <span className="text-gray-700">Автоматический список литературы</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <span>Проверка грамматики и орфографии</span>
+            <span className="text-gray-700">Проверка грамматики и орфографии</span>
           </div>
         </div>
 
@@ -44,20 +58,24 @@ export function Hero() {
           </div>
           
           <textarea 
-            className="w-full h-32 p-4 border border-gray-300 rounded-lg resize-none text-left"
-            placeholder="Роль социальных сетей в современном обществе"
+            className="w-full h-32 p-4 border border-gray-300 rounded-lg resize-none text-left text-gray-700"
+            value={textareaValue}
+            onChange={(e) => setTextareaValue(e.target.value)}
+            placeholder="Введите тему для эссе..."
           />
           
           <div className="mt-4 text-left">
-            <p className="text-sm text-gray-600 mb-2">Предлагаемые темы:</p>
-            <div className="flex flex-wrap gap-2 text-xs">
-              <span className="bg-gray-100 px-2 py-1 rounded">Анализ темы мести в "Гамлете" Шекспира</span>
-              <span className="bg-gray-100 px-2 py-1 rounded">Влияние COVID-19 на психическое здоровье родителей</span>
-              <span className="bg-gray-100 px-2 py-1 rounded">Факторы, влияющие на компенсационные стратегии и практики компаний</span>
-            </div>
-            <div className="flex flex-wrap gap-2 text-xs mt-2">
-              <span className="bg-gray-100 px-2 py-1 rounded">Роль социальных сетей в современном обществе</span>
-              <span className="bg-gray-100 px-2 py-1 rounded">Этические соображения в создании информированного согласия для исследовательского участия</span>
+            <p className="text-sm text-gray-600 mb-3">Предлагаемые темы:</p>
+            <div className="flex flex-wrap gap-2 text-sm">
+              {suggestedTopics.map((topic, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleTopicClick(topic)}
+                  className="bg-white border border-gray-400 text-gray-800 px-3 py-2 rounded-md hover:bg-gray-50 hover:border-gray-500 transition-all duration-200 cursor-pointer text-left"
+                >
+                  {topic}
+                </button>
+              ))}
             </div>
           </div>
           

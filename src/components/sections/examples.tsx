@@ -43,7 +43,7 @@ export function Examples() {
             <div className="lg:w-1/2">
               <div className="border-4 border-purple-400 rounded-2xl p-6 bg-white shadow-lg">
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-bold text-lg mb-3">Создавайте сильные структуры</h4>
+                  <h4 className="font-bold text-lg mb-3 text-gray-700">Создавайте сильные структуры</h4>
                   <p className="text-gray-600 text-sm mb-4">
                     Разработайте четкий, логический план для вашей работы. ИИ поможет организовать 
                     разделы так, чтобы они были хорошо структурированы и последовательны.
@@ -51,15 +51,15 @@ export function Examples() {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                      <span className="text-sm">1. Негативные эффекты социальных сетей на психическое здоровье</span>
+                      <span className="text-sm text-gray-700">1. Негативные эффекты социальных сетей на психическое здоровье</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                      <span className="text-sm">2. Кибербуллинг и онлайн-домогательства</span>
+                      <span className="text-sm text-gray-700">2. Кибербуллинг и онлайн-домогательства</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                      <span className="text-sm">3. Страх упустить что-то (FOMO)</span>
+                      <span className="text-sm text-gray-700">3. Страх упустить что-то (FOMO)</span>
                     </div>
                   </div>
                 </div>
@@ -83,14 +83,14 @@ export function Examples() {
             <div className="lg:w-1/2">
               <div className="border-4 border-green-400 rounded-2xl p-6 bg-white shadow-lg">
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-bold text-lg mb-3">Пишите без препятствий</h4>
+                  <h4 className="font-bold text-lg mb-3 text-gray-700">Пишите без препятствий</h4>
                   <p className="text-gray-600 text-sm mb-4">
                     Получите помощь для аргументов, дополнительные детали, перефразирование и редактирование. 
                     Вы можете редактировать и переписывать без препятствий.
                   </p>
                   <div className="bg-white p-3 rounded border text-xs">
                     <p className="mb-2">
-                      <strong>Исследование показало, что социальные сети могут оказывать как положительное, 
+                      <strong className="text-gray-700">Исследование показало, что социальные сети могут оказывать как положительное, 
                       так и отрицательное влияние на психическое здоровье подростков...</strong>
                     </p>
                     <p className="text-gray-500">
@@ -118,14 +118,14 @@ export function Examples() {
             <div className="lg:w-1/2">
               <div className="border-4 border-orange-400 rounded-2xl p-6 bg-white shadow-lg">
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-bold text-lg mb-3">Создавайте списки литературы</h4>
+                  <h4 className="font-bold text-lg mb-3 text-gray-700">Создавайте списки литературы</h4>
                   <p className="text-gray-600 text-sm mb-4">
                     Генерируйте и обновляйте цитаты в MLA, APA, Чикаго и других стилях — 
                     автоматически отформатированные для точности.
                   </p>
                   <div className="bg-white p-3 rounded border text-xs space-y-2">
                     <div>
-                      <strong>Источники:</strong>
+                      <strong className="text-gray-700">Источники:</strong>
                     </div>
                     <div className="text-gray-700">
                       <p>Boyd, D. M., & Ellison, N. B. (2007). Социальные сетевые сайты...</p>
