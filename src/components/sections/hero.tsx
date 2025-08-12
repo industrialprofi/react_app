@@ -1,59 +1,83 @@
 "use client";
 
 import { Button } from "../ui/button";
-import { AnimatedSection } from "../ui/animated-section";
+import { Check } from "lucide-react";
 
 export function Hero() {
   return (
-    <section className="py-16 md:py-24">
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="flex flex-col lg:flex-row items-center gap-8 md:gap-16">
-          <div className="w-full lg:w-1/2 space-y-4 text-center lg:text-left">
-            <AnimatedSection direction="up" delay={0.1}>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
-                Генерация качественных текстов с помощью ИИ
-              </h1>
-            </AnimatedSection>
-            
-            <AnimatedSection direction="up" delay={0.2}>
-              <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-lg mx-auto lg:mx-0">
-                Создавайте уникальные, качественные и разнообразные тексты за секунды без лишних усилий
-              </p>
-            </AnimatedSection>
-            
-            <AnimatedSection direction="up" delay={0.3}>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Button size="lg" className="px-6 sm:px-8 w-full sm:w-auto">
-                  Начать бесплатно
-                </Button>
-                <Button variant="outline" size="lg" className="px-6 sm:px-8 w-full sm:w-auto">
-                  Узнать больше
-                </Button>
-              </div>
-            </AnimatedSection>
+    <section className="bg-white py-16 px-4">
+      <div className="container mx-auto text-center max-w-4xl">
+        <h1 className="text-4xl md:text-5xl font-bold text-black mb-6">
+          Ваше эссе — написано на 90% быстрее с помощью ИИ
+        </h1>
+        
+        <div className="flex flex-wrap justify-center gap-6 mb-8 text-sm">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <span>Быстрая структура</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <span>Проверка оригинальности</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <span>100% бесплатные источники с PDF</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <span>Автоматический список литературы</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <span>Проверка грамматики и орфографии</span>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 max-w-2xl mx-auto mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="bg-black text-white px-3 py-1 rounded text-sm font-medium">
+              Эссе
+            </div>
+            <span className="text-gray-600 text-sm">Обзор литературы</span>
+            <span className="text-gray-600 text-sm">Если сомневаетесь, вы можете отправить для подтверждения</span>
           </div>
           
-          <AnimatedSection direction="left" delay={0.4} className="w-full lg:w-1/2">
-            <div className="relative">
-              <div className="w-full h-full bg-gradient-to-tr from-primary/60 to-accent/60 absolute rounded-full blur-3xl opacity-20 -z-10"></div>
-              <div className="relative bg-card rounded-2xl shadow-xl p-4 md:p-8 border border-border">
-                <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-4 md:p-6 border border-border/50">
-                  <div className="space-y-4 font-mono text-sm sm:text-base">
-                    <p>
-                      <span className="text-primary font-semibold">&gt;</span> <span className="text-foreground">Здравствуйте! Я текстовый ассистент на базе искусственного интеллекта.</span>
-                    </p>
-                    <p>
-                      <span className="text-primary font-semibold">&gt;</span> <span className="text-foreground">Чем могу помочь? Я умею писать тексты любого формата: от коротких описаний до полноценных статей.</span>
-                    </p>
-                    <p className="flex items-center">
-                      <span className="text-accent font-semibold mr-1 animate-pulse">&gt;</span> 
-                      <span className="block animate-pulse text-muted-foreground">Введите запрос...</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
+          <textarea 
+            className="w-full h-32 p-4 border border-gray-300 rounded-lg resize-none text-left"
+            placeholder="Роль социальных сетей в современном обществе"
+          />
+          
+          <div className="mt-4 text-left">
+            <p className="text-sm text-gray-600 mb-2">Предлагаемые темы:</p>
+            <div className="flex flex-wrap gap-2 text-xs">
+              <span className="bg-gray-100 px-2 py-1 rounded">Анализ темы мести в "Гамлете" Шекспира</span>
+              <span className="bg-gray-100 px-2 py-1 rounded">Влияние COVID-19 на психическое здоровье родителей</span>
+              <span className="bg-gray-100 px-2 py-1 rounded">Факторы, влияющие на компенсационные стратегии и практики компаний</span>
             </div>
-          </AnimatedSection>
+            <div className="flex flex-wrap gap-2 text-xs mt-2">
+              <span className="bg-gray-100 px-2 py-1 rounded">Роль социальных сетей в современном обществе</span>
+              <span className="bg-gray-100 px-2 py-1 rounded">Этические соображения в создании информированного согласия для исследовательского участия</span>
+            </div>
+          </div>
+          
+          <Button className="w-full mt-6 bg-black text-white hover:bg-gray-800 rounded-full py-3 text-base font-medium">
+            ✨ Начать писать
+          </Button>
+        </div>
+
+        <p className="text-gray-600 text-sm mb-4">
+          Реальные академические источники от 92,000+ поставщиков
+        </p>
+        
+        <div className="flex justify-center items-center gap-8 opacity-60">
+          <img src="/api/placeholder/80/40" alt="PubMed" className="h-8" />
+          <img src="/api/placeholder/80/40" alt="Springer" className="h-8" />
+          <img src="/api/placeholder/80/40" alt="Cambridge" className="h-8" />
+          <img src="/api/placeholder/80/40" alt="Oxford Academic" className="h-8" />
+          <img src="/api/placeholder/80/40" alt="CiteSeer" className="h-8" />
+          <img src="/api/placeholder/80/40" alt="IEEE" className="h-8" />
+          <img src="/api/placeholder/80/40" alt="Taylor" className="h-8" />
         </div>
       </div>
     </section>
