@@ -8,7 +8,7 @@ const navItems = [
   { label: "ИИ Детектор", href: "#detector" },
   { label: "Блог", href: "#blog" },
   { label: "Цены", href: "/pricing" },
-  { label: "Поддержка", href: "#support" },
+  { label: "Поддержка", href: "/support" },
 ];
 
 export function Header() {
