@@ -1,37 +1,47 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 
 const plans = [
   {
-    name: "Бесплатный",
+    name: "Бесплатно",
     price: "0 ₽",
-    description: "Для базового использования",
+    period: "в месяц",
     features: [
-      "10 запросов в день",
-      "Генерация до 500 слов",
-      "Базовые типы текстов",
-      "Стандартное время генерации"
+      { text: "Ограниченная генерация контента", included: true },
+      { text: "Ограниченное редактирование", included: true },
+      { text: "Публичный/контентный креатор", included: true },
+      { text: "Тысячи шаблонов эссе", included: true },
+      { text: "Генерация изображений", included: true },
+      { text: "Магия в тексте", included: true },
+      { text: "Нет плагиата", included: false },
+      { text: "Нет рекламы", included: false },
+      { text: "Безопасный доступ к новым функциям", included: false }
     ],
-    buttonText: "Начать бесплатно",
+    buttonText: "Начать сейчас",
     buttonVariant: "outline" as const,
     delay: 0.1,
   },
   {
-    name: "Стандартный",
-    price: "699 ₽",
+    name: "Дважды в год",
+    price: "1049 ₽",
     period: "в месяц",
-    description: "Для регулярного использования",
+    originalPrice: "1399 ₽",
+    discount: "25% скидка",
     features: [
-      "100 запросов в день",
-      "Генерация до 2000 слов",
-      "Все типы текстов",
-      "Быстрое время генерации",
-      "Приоритетная поддержка"
+      { text: "Неограниченная генерация контента", included: true },
+      { text: "Неограниченное редактирование", included: true },
+      { text: "Тысячи шаблонов эссе и статей", included: true },
+      { text: "Генерация изображений", included: true },
+      { text: "Генерация текста", included: true },
+      { text: "Генерация изображений", included: true },
+      { text: "Все плагиаты", included: true },
+      { text: "Безопасный доступ к новым функциям", included: true },
+      { text: "Нет рекламы", included: true }
     ],
-    buttonText: "Выбрать план",
+    buttonText: "Получить скидку",
     buttonVariant: "default" as const,
     featured: true,
     delay: 0.3,
@@ -40,7 +50,7 @@ const plans = [
 
 export function Pricing() {
   return (
-    <section id="цены" className="py-14 sm:py-16 md:py-20">
+    <section className="py-14 sm:py-16 md:py-20 bg-gray-50">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -49,13 +59,26 @@ export function Pricing() {
           viewport={{ once: true }}
           className="text-center mb-8 sm:mb-12"
         >
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">Простые и понятные тарифы</h2>
-          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-1">
-            Выберите подходящий тариф и начните создавать качественные тексты прямо сейчас
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">Цены</h1>
+          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+            <span className="text-blue-600 font-semibold">1981</span> человек подписались сегодня. Не ждите!
           </p>
+          
+          <div className="flex justify-center items-center gap-4 mt-6">
+            <span className="text-sm text-gray-600">Дважды в год</span>
+            <div className="flex items-center gap-2">
+              <button className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg text-sm font-medium">
+                СКИДКА 25%
+              </button>
+              <span className="text-sm text-gray-600">Ежемесячно</span>
+              <button className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium">
+                СКИДКА 30%
+              </button>
+            </div>
+          </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
           {plans.map((plan, index) => (
             <motion.div
               key={index}
@@ -63,36 +86,54 @@ export function Pricing() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: plan.delay }}
               viewport={{ once: true, margin: "-50px" }}
-              className={`bg-white rounded-lg sm:rounded-xl shadow-md overflow-hidden ${
-                plan.featured ? "border-2 border-[#2563eb] relative" : "border border-gray-200"
+              className={`bg-white rounded-lg shadow-lg overflow-hidden relative ${
+                plan.featured ? "border-2 border-purple-500" : "border border-gray-200"
               }`}
             >
-              {plan.featured && (
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#2563eb] text-white text-xs font-bold py-1 px-3 sm:px-4 rounded-full">
-                  Популярный выбор
+              {plan.featured && plan.discount && (
+                <div className="absolute top-4 right-4 bg-purple-600 text-white text-xs font-bold py-1 px-3 rounded-full">
+                  {plan.discount}
                 </div>
               )}
-              <div className="p-5 sm:p-6">
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">{plan.name}</h3>
-                <div className="flex items-baseline mb-3 sm:mb-4">
-                  <span className="text-3xl sm:text-4xl font-bold">{plan.price}</span>
-                  {plan.period && (
-                    <span className="ml-1 text-sm sm:text-base text-gray-600">{plan.period}</span>
+              
+              <div className="p-6">
+                <h3 className="text-xl font-semibold mb-4">{plan.name}</h3>
+                
+                <div className="mb-6">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-bold">{plan.price}</span>
+                    <span className="text-gray-600">{plan.period}</span>
+                  </div>
+                  {plan.originalPrice && (
+                    <div className="text-sm text-gray-500 line-through mt-1">
+                      {plan.originalPrice}
+                    </div>
                   )}
                 </div>
-                <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">{plan.description}</p>
-                <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
+
+                <ul className="space-y-3 mb-8">
                   {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-center">
-                      <Check className="w-4 h-4 sm:w-5 sm:h-5 text-[#2563eb] mr-2 flex-shrink-0" />
-                      <span className="text-sm sm:text-base text-gray-700">{feature}</span>
+                    <li key={i} className="flex items-start gap-3">
+                      {feature.included ? (
+                        <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      ) : (
+                        <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+                      )}
+                      <span className={`text-sm ${feature.included ? 'text-gray-700' : 'text-gray-400'}`}>
+                        {feature.text}
+                      </span>
                     </li>
                   ))}
                 </ul>
+                
                 <Button
                   variant={plan.buttonVariant}
-                  className="w-full"
-                  size="sm"
+                  className={`w-full ${
+                    plan.featured 
+                      ? 'bg-purple-600 hover:bg-purple-700 text-white' 
+                      : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                  }`}
+                  size="lg"
                 >
                   {plan.buttonText}
                 </Button>
@@ -100,6 +141,20 @@ export function Pricing() {
             </motion.div>
           ))}
         </div>
+        
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          viewport={{ once: true }}
+          className="text-center mt-8"
+        >
+          <p className="text-sm text-gray-600">
+            Вы можете отменить подписку в любое время в соответствии с{" "}
+            <a href="#" className="text-blue-600 underline">Условиями обслуживания</a> или{" "}
+            <a href="#" className="text-blue-600 underline">Политикой возврата</a>
+          </p>
+        </motion.div>
       </div>
     </section>
   );
