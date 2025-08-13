@@ -59,7 +59,7 @@ export function Pricing() {
           viewport={{ once: true }}
           className="text-center mb-8 sm:mb-12"
         >
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">Цены</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-black">Цены</h1>
           <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
             <span className="text-blue-600 font-semibold">1981</span> человек подписались сегодня. Не ждите!
           </p>
