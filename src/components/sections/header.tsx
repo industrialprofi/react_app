@@ -22,9 +22,6 @@ export function Header() {
         <div className="flex items-center gap-6">
           <Navigation items={navItems} />
           <div className="flex items-center gap-3">
-            <select className="text-sm border-none bg-transparent">
-              <option>🇷🇺 Ru</option>
-            </select>
             <Button variant="ghost" size="sm" className="text-black">
               Войти
             </Button>
