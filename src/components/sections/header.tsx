@@ -5,7 +5,7 @@ import { Navigation } from "../ui/navigation";
 import { Button } from "../ui/button";
 
 const navItems = [
-  { label: "ИИ Детектор", href: "#detector" },
+  { label: "ИИ Детектор", href: "/ai-detector" },
   { label: "Блог", href: "#blog" },
   { label: "Цены", href: "/pricing" },
   { label: "Поддержка", href: "/support" },

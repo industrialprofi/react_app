@@ -6,7 +6,7 @@ const footerSections = {
   generators: [
     "Генератор контента",
     "Эссе генератор",
-    "ИИ детектор",
+    { label: "ИИ детектор", href: "/ai-detector" },
     "Генератор",
     "Генератор",
     "Наш исследователь",
@@ -62,8 +62,11 @@ export function Footer() {
               <ul className="space-y-1">
                 {footerSections.generators.map((link, index) => (
                   <li key={index}>
-                    <Link href="#" className="text-gray-400 hover:text-white text-sm">
-                      {link}
+                    <Link 
+                      href={typeof link === 'object' ? link.href : "#"} 
+                      className="text-gray-400 hover:text-white text-sm"
+                    >
+                      {typeof link === 'object' ? link.label : link}
                     </Link>
                   </li>
                 ))}
