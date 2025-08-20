@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ChevronDown, ChevronUp, MessageCircle, ArrowRight } from "lucide-react";
+import { ChevronDown, ChevronUp, MessageCircle, ArrowRight, Plus } from "lucide-react";
 import { Button } from "../ui/button";
 
 const faqData = [
@@ -34,6 +34,7 @@ const faqData = [
 
 export function Support() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [foundAnswer, setFoundAnswer] = useState<boolean | null>(null);
   const [formData, setFormData] = useState({
     email: "",
     subject: "",
@@ -55,6 +56,18 @@ export function Support() {
     e.preventDefault();
     // Здесь будет логика отправки формы
     console.log("Form submitted:", formData);
+    // Сбросить форму после отправки
+    setFormData({
+      email: "",
+      subject: "",
+      message: ""
+    });
+    // Показать сообщение об успешной отправке
+    alert("Ваше сообщение успешно отправлено! Мы свяжемся с вами в ближайшее время.");
+  };
+
+  const handleFeedback = (found: boolean) => {
+    setFoundAnswer(found);
   };
 
   return (
@@ -67,19 +80,24 @@ export function Support() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-black">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-gray-900">
             Есть вопрос? Спросите команду DreamTeamSAAS!
           </h1>
           <p className="text-lg text-gray-600 mb-6">
             Только для поддержки.
           </p>
-          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-lg">
-            <MessageCircle className="w-5 h-5" />
-            <span className="font-medium">Чтобы начать писать</span>
-            <a href="/" className="font-semibold underline hover:no-underline flex items-center gap-1">
-              нажмите здесь
-              <ArrowRight className="w-4 h-4" />
-            </a>
+          <div className="flex justify-center">
+            <button 
+              onClick={() => window.location.href = "/"}
+              className="flex items-center gap-2 bg-blue-50 text-blue-600 px-5 py-2.5 rounded-lg hover:bg-blue-100 transition-colors"
+            >
+              <MessageCircle className="w-5 h-5" />
+              <span className="font-medium">Чтобы начать писать</span>
+              <span className="font-semibold underline hover:no-underline flex items-center gap-1">
+                нажмите здесь
+                <ArrowRight className="w-4 h-4" />
+              </span>
+            </button>
           </div>
         </motion.div>
 
@@ -91,7 +109,7 @@ export function Support() {
           viewport={{ once: true }}
           className="mb-12"
         >
-          <h2 className="text-2xl font-bold mb-8 text-center">Часто задаваемые вопросы</h2>
+          <h2 className="text-2xl font-bold mb-8 text-center text-gray-900">Часто задаваемые вопросы</h2>
           <div className="space-y-4">
             {faqData.map((faq, index) => (
               <motion.div
@@ -105,16 +123,19 @@ export function Support() {
                 <button
                   onClick={() => toggleFaq(index)}
                   className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"
+                  aria-expanded={openFaq === index}
+                  aria-controls={`faq-content-${index}`}
                 >
                   <h3 className="font-semibold text-gray-900">{faq.question}</h3>
                   {openFaq === index ? (
                     <ChevronUp className="w-5 h-5 text-gray-500 flex-shrink-0" />
                   ) : (
-                    <ChevronDown className="w-5 h-5 text-gray-500 flex-shrink-0" />
+                    <Plus className="w-5 h-5 text-gray-500 flex-shrink-0" />
                   )}
                 </button>
                 {openFaq === index && (
                   <motion.div
+                    id={`faq-content-${index}`}
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
@@ -137,9 +158,9 @@ export function Support() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
           viewport={{ once: true }}
-          className="bg-white rounded-lg shadow-lg p-8"
+          className="bg-white rounded-xl shadow-sm p-8 border border-gray-100"
         >
-          <h2 className="text-2xl font-bold mb-6 text-center">Не нашли ответ на свой вопрос?</h2>
+          <h2 className="text-2xl font-bold mb-6 text-center text-gray-900">Не нашли ответ на свой вопрос?</h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
@@ -191,7 +212,7 @@ export function Support() {
             
             <Button
               type="submit"
-              className="w-full bg-black text-white hover:bg-gray-800 py-3 text-lg font-medium"
+              className="w-full bg-blue-600 text-white hover:bg-blue-700 py-3 text-lg font-medium rounded-full"
               size="lg"
             >
               Отправить сообщение
@@ -207,12 +228,20 @@ export function Support() {
           viewport={{ once: true }}
           className="text-center mt-12"
         >
-          <h3 className="text-lg font-semibold mb-4">Нашли ли вы ответ на свой вопрос?</h3>
+          <h3 className="text-lg font-semibold mb-4 text-gray-900">Нашли ли вы ответ на свой вопрос?</h3>
           <div className="flex justify-center gap-4">
-            <Button variant="outline" className="px-8">
+            <Button 
+              variant="outline" 
+              className={`px-8 ${foundAnswer === true ? 'bg-blue-50 border-blue-200 text-blue-600' : ''}`}
+              onClick={() => handleFeedback(true)}
+            >
               Да
             </Button>
-            <Button variant="outline" className="px-8">
+            <Button 
+              variant="outline" 
+              className={`px-8 ${foundAnswer === false ? 'bg-blue-50 border-blue-200 text-blue-600' : ''}`}
+              onClick={() => handleFeedback(false)}
+            >
               Нет
             </Button>
           </div>
