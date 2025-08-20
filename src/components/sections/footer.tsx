@@ -14,7 +14,6 @@ const footerSections = {
   ],
   resources: [
     "Как использовать DreamTeamSAAS",
-    "Блог",
     "Примеры",
     "Генератор",
     "Наш исследователь",
