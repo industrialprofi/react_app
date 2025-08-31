@@ -105,9 +105,9 @@ export function Hero() {
             className="grid grid-cols-3 gap-8 mt-16 text-center"
           >
             {[
-              { number: "10K+", label: "Студентов" },
-              { number: "50K+", label: "Текстов создано" },
-              { number: "99%", label: "Точность AI" }
+              { number: "1K+", label: "Студентов" },
+              { number: "5K+", label: "Текстов создано" },
+              { number: "98%", label: "Точность AI" }
             ].map((stat, index) => (
               <div key={index}>
                 <div className="text-3xl font-bold text-gray-900">{stat.number}</div>
