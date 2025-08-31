@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "../../components/ui/button";
 import { Eye, EyeOff, Mail, Lock, User, Chrome } from "lucide-react";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+import { useAuth } from "../../lib/auth-context";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { login, register, isAuthenticated } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -19,6 +21,12 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Redirect if already authenticated
+  if (isAuthenticated) {
+    router.push('/dashboard');
+    return null;
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -36,30 +44,17 @@ export default function LoginPage() {
       return;
     }
 
-    const endpoint = isLogin ? `${API_URL}/auth/login` : `${API_URL}/auth/register`;
-    const payload = isLogin 
-      ? { email: formData.email, password: formData.password }
-      : { email: formData.email, username: formData.username, password: formData.password };
-
     try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.detail || 'Произошла ошибка');
-      }
-
       if (isLogin) {
-        // TODO: Handle successful login (e.g., save token, redirect)
+        await login(formData.email, formData.password);
         setSuccessMessage('Вход выполнен успешно!');
-        console.log('Login successful:', data);
+        // Redirect will happen automatically due to isAuthenticated check
+        setTimeout(() => router.push('/dashboard'), 1000);
       } else {
-        setSuccessMessage(data.message || 'Регистрация прошла успешно! Проверьте свою почту для подтверждения.');
+        await register(formData.email, formData.username, formData.password);
+        setSuccessMessage('Регистрация прошла успешно! Проверьте свою почту для подтверждения.');
+        // Switch to login form after successful registration
+        setTimeout(() => setIsLogin(true), 2000);
       }
     } catch (err: any) {
       setError(err.message);
@@ -69,7 +64,7 @@ export default function LoginPage() {
   };
   
   const handleGoogleAuth = () => {
-    window.location.href = `${API_URL}/auth/login/google`;
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/login/google`;
   };
 
   return (
@@ -95,7 +90,7 @@ export default function LoginPage() {
               {isLogin ? "Вход" : "Создать аккаунт"}
             </h1>
             <p className="text-gray-600">
-              {isLogin ? "Введите данные для входа" : "Присоединяйтесь к нам сегодня"}
+              {isLogin ? "Введите данные для входа" : "Присоединяйтесь сегодня"}
             </p>
           </div>
 
