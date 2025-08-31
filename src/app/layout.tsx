@@ -4,6 +4,7 @@ import { AuthProvider } from "../lib/auth-context";
 import React from "react";
 
 export const metadata: Metadata = {
+  metadataBase: new URL('http://localhost:3000'),
   title: "DreamTeamSAAS - ИИ-помощник для академической работы",
   description: "Создавайте качественные академические работы за минуты. ИИ поможет с эссе, исследованиями, обзорами литературы и кейс-стади.",
   keywords: "ИИ, академическая работа, эссе, исследования, студенты, образование",
