@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "../lib/auth-context";
+import React from "react";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -29,7 +31,10 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
       >
-        {children}
+        {/* Оборачиваем приложение в AuthProvider для управления аутентификацией */}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

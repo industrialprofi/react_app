@@ -2,10 +2,17 @@
 
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { Check } from "lucide-react";
+import { chatApi } from "../../lib/api";
+import { useAuth } from "../../lib/auth-context";
+import { LoginForm } from "../auth/LoginForm";
 
 export function Hero() {
   const [textareaValue, setTextareaValue] = useState("Роль социальных сетей в современном обществе");
+  const [essayResult, setEssayResult] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState("");
+
+  const { user, token } = useAuth();
 
   const suggestedTopics = [
     "Анализ темы мести в \"Гамлете\" Шекспира",
@@ -17,6 +24,28 @@ export function Hero() {
 
   const handleTopicClick = (topic: string) => {
     setTextareaValue(topic);
+  };
+
+  // Функция генерации эссе
+  const handleStartWriting = async () => {
+    if (!textareaValue.trim()) return;
+
+    setError("");
+    setEssayResult("");
+    setIsGenerating(true);
+
+    try {
+      const response = await chatApi.sendMessage({
+        message: `Напиши эссе на тему: ${textareaValue}`,
+        // conversation_id не указываем, AI создаст новый разговор
+      });
+
+      setEssayResult(response.response);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Ошибка генерации эссе");
+    } finally {
+      setIsGenerating(false);
+    }
   };
   
   return (
@@ -81,10 +110,42 @@ export function Hero() {
             </div>
           </div>
           
-          <Button className="w-full mt-6 bg-blue-600 text-white hover:bg-blue-700 rounded-full py-3 text-base font-medium">
-            ✨ Начать писать
-          </Button>
+          {/* Показываем LoginForm если пользователь не авторизован */}
+          {!token ? (
+            <div className="mt-6">
+              <p className="text-sm text-gray-600 mb-4">Для генерации эссе необходимо войти в систему:</p>
+              <LoginForm />
+            </div>
+          ) : (
+            <Button 
+              className="w-full mt-6 bg-blue-600 text-white hover:bg-blue-700 rounded-full py-3 text-base font-medium"
+              onClick={handleStartWriting}
+              disabled={isGenerating}
+            >
+              {isGenerating ? "✨ Генерирую эссе..." : "✨ Начать писать"}
+            </Button>
+          )}
         </div>
+
+        {/* Отображение ошибки */}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 max-w-2xl mx-auto">
+            {error}
+          </div>
+        )}
+
+        {/* Отображение результата генерации */}
+        {essayResult && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-6 max-w-4xl mx-auto mb-10">
+            <h3 className="text-lg font-medium mb-4 text-green-800">Сгенерированное эссе:</h3>
+            <div className="text-left text-gray-700 whitespace-pre-wrap bg-white p-4 rounded border">
+              {essayResult}
+            </div>
+            <p className="text-sm text-gray-600 mt-4">
+              Эссе сохранено в вашем разговоре. Вы можете продолжить работу в разделе "Мои разговоры".
+            </p>
+          </div>
+        )}
 
         <p className="text-gray-600 text-sm mb-6">
           Доступ к реальным академическим источникам от 92,000+ поставщиков
