@@ -48,7 +48,7 @@ export default function AuthCallbackPage() {
         
         // Перенаправляем на страницу входа через 3 секунды
         setTimeout(() => {
-          router.push('/login');
+          router.push('/auth/login');
         }, 3000);
       }
     };
@@ -101,7 +101,7 @@ export default function AuthCallbackPage() {
         {status === 'error' && (
           <div className="mt-6">
             <button
-              onClick={() => router.push('/login')}
+              onClick={() => router.push('/auth/login')}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
             >
               Вернуться к входу

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Bot, Plus, Settings, LogOut, User, Crown, Menu, X, Trash2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import config from '@/lib/config';
 
 interface Conversation {
   id: number;
@@ -58,7 +59,7 @@ export default function Dashboard() {
   const loadUserData = async () => {
     try {
       const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
+      const response = await fetch(`${config.API_BASE_URL}/auth/me`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -82,7 +83,7 @@ export default function Dashboard() {
   const loadConversations = async () => {
     try {
       const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/conversations`, {
+      const response = await fetch(`${config.API_BASE_URL}/conversations`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -100,7 +101,7 @@ export default function Dashboard() {
   const startNewConversation = async () => {
     try {
       const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/conversations`, {
+      const response = await fetch(`${config.API_BASE_URL}/conversations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -151,7 +152,7 @@ export default function Dashboard() {
 
     try {
       const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/chat`, {
+      const response = await fetch(`${config.API_BASE_URL}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -198,7 +199,7 @@ export default function Dashboard() {
   const deleteConversation = async (conversationId: number) => {
     try {
       const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/conversations/${conversationId}`, {
+      const response = await fetch(`${config.API_BASE_URL}/conversations/${conversationId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

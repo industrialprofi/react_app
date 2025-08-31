@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Bot, Crown, Check, ArrowLeft, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import config from '@/lib/config';
 
 interface SubscriptionPlan {
   id: number;
@@ -45,7 +46,7 @@ export default function SubscriptionsPage() {
       const token = localStorage.getItem('auth_token');
       
       // Load user data
-      const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
+      const userResponse = await fetch(`${config.API_BASE_URL}/auth/me`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (userResponse.ok) {
@@ -53,7 +54,7 @@ export default function SubscriptionsPage() {
       }
 
       // Load subscription plans
-      const plansResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/subscriptions/plans`, {
+      const plansResponse = await fetch(`${config.API_BASE_URL}/subscriptions/plans`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (plansResponse.ok) {
@@ -61,7 +62,7 @@ export default function SubscriptionsPage() {
       }
 
       // Load current subscription
-      const subscriptionResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/subscriptions/my-subscription`, {
+      const subscriptionResponse = await fetch(`${config.API_BASE_URL}/subscriptions/my-subscription`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (subscriptionResponse.ok) {

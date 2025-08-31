@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import config from '@/lib/config';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function RegisterPage() {
     setSuccess('');
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/register`, {
+      const response = await fetch(`${config.API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,7 +52,7 @@ export default function RegisterPage() {
   };
 
   const handleOAuthLogin = (provider: string) => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login/${provider}`;
+    window.location.href = `${config.API_BASE_URL}/auth/login/${provider}`;
   };
 
   return (
