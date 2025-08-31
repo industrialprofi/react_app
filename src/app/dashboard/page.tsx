@@ -1,23 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useAuth } from "../../lib/auth-context";
-import { useRouter } from "next/navigation";
-import { conversationsApi, chatApi } from "../../lib/api";
-import { motion } from "framer-motion";
-import { Button } from "../../components/ui/button";
-import { 
-  MessageSquare, 
-  Plus, 
-  Send, 
-  User, 
-  Bot, 
-  Trash2, 
-  Edit3,
-  LogOut,
-  Menu,
-  X
-} from "lucide-react";
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Bot, MessageSquare, Plus, Settings, LogOut, User, Crown, Menu, X, Trash2, Send } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 interface Conversation {
   id: number;
@@ -33,55 +20,94 @@ interface Message {
   created_at: string;
 }
 
-export default function DashboardPage() {
-  const { user, logout, isAuthenticated, isLoading } = useAuth();
+interface ChatMessage {
+  id: number;
+  sender_type: 'user' | 'assistant' | 'system';
+  content: string;
+  created_at: string;
+}
+
+interface User {
+  id: number;
+  username: string;
+  email: string;
+}
+
+export default function Dashboard() {
   const router = useRouter();
-  
+  const [user, setUser] = useState<User | null>(null);
   const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [inputMessage, setInputMessage] = useState('');
-  const [isSending, setIsSending] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [loadingConversations, setLoadingConversations] = useState(true);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [currentMessage, setCurrentMessage] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Redirect if not authenticated
+  // Check authentication and load user data
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push('/login');
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      router.push('/auth/login');
+      return;
     }
-  }, [isAuthenticated, isLoading, router]);
 
-  // Load conversations on mount
-  useEffect(() => {
-    if (isAuthenticated) {
-      loadConversations();
+    loadUserData();
+    loadConversations();
+  }, [router]);
+
+  const loadUserData = async () => {
+    try {
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to load user data');
+      }
+
+      const userData = await response.json();
+      setUser(userData);
+    } catch (error) {
+      console.error('Error loading user data:', error);
+      localStorage.removeItem('auth_token');
+      router.push('/auth/login');
+    } finally {
+      setIsLoading(false);
     }
-  }, [isAuthenticated]);
+  };
 
   const loadConversations = async () => {
     try {
-      setLoadingConversations(true);
-      const data = await conversationsApi.getConversations();
-      setConversations(data);
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/conversations`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setConversations(data);
+      }
     } catch (error) {
       console.error('Error loading conversations:', error);
-    } finally {
-      setLoadingConversations(false);
     }
   };
 
-  const createNewConversation = async () => {
+  const startNewConversation = async () => {
     try {
-      const newConversation = await conversationsApi.createConversation('Новый разговор');
-      setConversations(prev => [newConversation, ...prev]);
-      setCurrentConversation(newConversation);
-      setMessages([]);
-    } catch (error) {
-      console.error('Error creating conversation:', error);
-    }
-  };
-
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/conversations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ title: "Новый чат" })
   const selectConversation = async (conversation: Conversation) => {
     setCurrentConversation(conversation);
     setMessages(conversation.messages || []);
@@ -300,9 +326,17 @@ export default function DashboardPage() {
                 <p className="text-gray-600 mb-6">
                   Начните разговор с ИИ-помощником для создания академических работ
                 </p>
-                <Button
-                  onClick={createNewConversation}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                <Button 
+                  onClick={async () => {
+                    try {
+                      const { conversationsApi } = await import('@/lib/api');
+                      const newConversation = await conversationsApi.createConversation("Новый документ");
+                      router.push(`/editor/${newConversation.id}`);
+                    } catch (error) {
+                      console.error('Error creating document:', error);
+                    }
+                  }}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Начать новый чат

@@ -144,6 +144,22 @@ export const conversationsApi = {
       throw new Error(error.detail || 'Ошибка удаления разговора');
     }
   },
+
+  // Добавление сообщения в разговор (для сохранения контента документа)
+  addMessageToConversation: async (id: number, content: string): Promise<{ message: string; message_id: number }> => {
+    const response = await fetch(`${config.API_BASE_URL}/conversations/${id}/messages`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ content }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Ошибка сохранения контента');
+    }
+
+    return response.json();
+  },
 };
 
 // API для аутентификации (дополнительные функции, не используемые в контексте)
