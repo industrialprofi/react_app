@@ -144,32 +144,23 @@ export function Hero() {
                 </div>
               </div>
 
-              {/* Аутентификация или кнопка генерации */}
-              {!token ? (
-                <div className="space-y-6">
-                  <div className="text-center">
-                    <p className="text-gray-600 mb-4">Для генерации эссе войдите в систему:</p>
+              {/* Кнопка генерации */}
+              <Button
+                className="w-full py-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
+                onClick={handleStartWriting}
+                disabled={isGenerating}
+              >
+                {isGenerating ? (
+                  <div className="flex items-center gap-3">
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                    ✨ Генерирую эссе...
                   </div>
-                  <LoginForm />
-                </div>
-              ) : (
-                <Button
-                  className="w-full py-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
-                  onClick={handleStartWriting}
-                  disabled={isGenerating}
-                >
-                  {isGenerating ? (
-                    <div className="flex items-center gap-3">
-                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                      ✨ Генерирую эссе...
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-3">
-                      ✨ Начать писать
-                    </div>
-                  )}
-                </Button>
-              )}
+                ) : (
+                  <div className="flex items-center gap-3">
+                    ✨ Начать писать
+                  </div>
+                )}
+              </Button>
             </div>
           </div>
 
