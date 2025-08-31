@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Bot, MessageSquare, Plus, Settings, LogOut, User, Crown, Menu, X, Trash2, Send } from 'lucide-react';
+import { Bot, Plus, Settings, LogOut, User, Crown, Menu, X, Trash2, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 
@@ -21,16 +21,16 @@ interface Message {
 }
 
 interface ChatMessage {
-  id: number;
-  sender_type: 'user' | 'assistant' | 'system';
+  id: string;
+  type: 'user' | 'assistant';
   content: string;
-  created_at: string;
+  timestamp: Date;
 }
 
 interface User {
   id: number;
-  username: string;
   email: string;
+  username?: string;
 }
 
 export default function Dashboard() {
@@ -44,7 +44,6 @@ export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Check authentication and load user data
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
     if (!token) {
@@ -108,70 +107,120 @@ export default function Dashboard() {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ title: "Новый чат" })
-  const selectConversation = async (conversation: Conversation) => {
-    setCurrentConversation(conversation);
-    setMessages(conversation.messages || []);
+      });
+
+      if (response.ok) {
+        const newConversation = await response.json();
+        setConversations(prev => [newConversation, ...prev]);
+        setCurrentConversationId(newConversation.id);
+        setMessages([]);
+      }
+    } catch (error) {
+      console.error('Error creating conversation:', error);
+    }
+  };
+
+  const selectConversation = (conversation: Conversation) => {
+    setCurrentConversationId(conversation.id);
+    
+    const chatMessages: ChatMessage[] = conversation.messages.map(msg => ({
+      id: msg.id.toString(),
+      type: msg.sender_type === 'user' ? 'user' : 'assistant',
+      content: msg.content,
+      timestamp: new Date(msg.created_at)
+    }));
+    
+    setMessages(chatMessages);
+    setSidebarOpen(false);
   };
 
   const sendMessage = async () => {
-    if (!inputMessage.trim() || isSending) return;
-
-    const userMessage = inputMessage.trim();
-    setInputMessage('');
-    setIsSending(true);
-
-    // Add user message to UI immediately
-    const tempUserMessage: Message = {
-      id: Date.now(),
-      sender_type: 'user',
-      content: userMessage,
-      created_at: new Date().toISOString(),
+    if (!currentMessage.trim()) return;
+    
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      type: 'user',
+      content: currentMessage,
+      timestamp: new Date()
     };
-    setMessages(prev => [...prev, tempUserMessage]);
+
+    setMessages(prev => [...prev, userMessage]);
+    const messageToSend = currentMessage;
+    setCurrentMessage('');
+    setIsTyping(true);
 
     try {
-      const response = await chatApi.sendMessage({
-        message: userMessage,
-        conversation_id: currentConversation?.id,
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          message: messageToSend,
+          conversation_id: currentConversationId || undefined
+        })
       });
 
-      // Add assistant response
-      const assistantMessage: Message = {
-        id: response.message_id,
-        sender_type: 'assistant',
-        content: response.response,
-        created_at: new Date().toISOString(),
-      };
+      if (response.ok) {
+        const data = await response.json();
+        const assistantMessage: ChatMessage = {
+          id: data.message_id.toString(),
+          type: 'assistant',
+          content: data.response,
+          timestamp: new Date()
+        };
 
-      setMessages(prev => [...prev, assistantMessage]);
-
-      // Update conversation in sidebar if it was created
-      if (!currentConversation && response.conversation_id) {
-        await loadConversations();
-        const newConv = conversations.find(c => c.id === response.conversation_id);
-        if (newConv) setCurrentConversation(newConv);
+        setMessages(prev => [...prev, assistantMessage]);
+        
+        if (data.conversation_id && !currentConversationId) {
+          setCurrentConversationId(data.conversation_id);
+          loadConversations();
+        }
+      } else {
+        throw new Error('Failed to send message');
       }
-
     } catch (error) {
       console.error('Error sending message:', error);
-      // Remove temporary message on error
-      setMessages(prev => prev.filter(msg => msg.id !== tempUserMessage.id));
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        type: 'assistant',
+        content: 'Извините, произошла ошибка при отправке сообщения.',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
-      setIsSending(false);
+      setIsTyping(false);
     }
   };
 
   const deleteConversation = async (conversationId: number) => {
     try {
-      await conversationsApi.deleteConversation(conversationId);
-      setConversations(prev => prev.filter(c => c.id !== conversationId));
-      if (currentConversation?.id === conversationId) {
-        setCurrentConversation(null);
-        setMessages([]);
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/conversations/${conversationId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        setConversations(prev => prev.filter(conv => conv.id !== conversationId));
+        
+        if (currentConversationId === conversationId) {
+          setCurrentConversationId(null);
+          setMessages([]);
+        }
       }
     } catch (error) {
       console.error('Error deleting conversation:', error);
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('auth_token');
+    router.push('/');
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -183,60 +232,47 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
-  if (!isAuthenticated) {
-    return null;
-  }
-
   return (
-    <div className="h-screen bg-gray-50 flex">
+    <div className="h-screen flex bg-gray-50">
       {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'w-80' : 'w-0'} transition-all duration-300 bg-white border-r border-gray-200 flex flex-col overflow-hidden`}>
-        {/* Header */}
-        <div className="p-4 border-b border-gray-200">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-xl font-bold text-gray-900">Чаты</h1>
-            <Button
-              onClick={() => setSidebarOpen(false)}
-              variant="ghost"
-              size="sm"
-              className="md:hidden"
-            >
-              <X className="w-4 h-4" />
-            </Button>
+      <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
+        <div className="flex items-center justify-between h-16 px-4 border-b">
+          <div className="flex items-center space-x-2">
+            <Bot className="w-8 h-8 text-blue-600" />
+            <span className="text-lg font-semibold">AI Assistant</span>
           </div>
           <Button
-            onClick={createNewConversation}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            variant="ghost"
+            size="sm"
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden"
           >
-            <Plus className="w-4 h-4 mr-2" />
-            Новый чат
+            <X className="w-4 h-4" />
           </Button>
         </div>
 
-        {/* Conversations List */}
-        <div className="flex-1 overflow-y-auto p-4">
-          {loadingConversations ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent mx-auto"></div>
-            </div>
-          ) : conversations.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p>Нет разговоров</p>
-            </div>
-          ) : (
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-4">
+            <Button
+              onClick={startNewConversation}
+              className="w-full mb-4 bg-blue-600 hover:bg-blue-700"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Новый чат
+            </Button>
+
             <div className="space-y-2">
               {conversations.map((conversation) => (
                 <div
                   key={conversation.id}
-                  className={`p-3 rounded-lg cursor-pointer transition-colors group ${
-                    currentConversation?.id === conversation.id
+                  className={`group p-3 rounded-lg cursor-pointer transition-colors ${
+                    currentConversationId === conversation.id
                       ? 'bg-blue-50 border border-blue-200'
                       : 'hover:bg-gray-50'
                   }`}
@@ -245,9 +281,9 @@ export default function Dashboard() {
                   <div className="flex items-center justify-between">
                     <div className="flex-1 min-w-0">
                       <h3 className="font-medium text-gray-900 truncate">
-                        {conversation.title || 'Новый разговор'}
+                        {conversation.title || 'Новый чат'}
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-xs text-gray-500 mt-1">
                         {new Date(conversation.created_at).toLocaleDateString('ru-RU')}
                       </p>
                     </div>
@@ -266,77 +302,66 @@ export default function Dashboard() {
                 </div>
               ))}
             </div>
-          )}
+          </div>
         </div>
 
-        {/* User Info */}
-        <div className="p-4 border-t border-gray-200">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                <User className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-900">{user?.username || 'Пользователь'}</p>
-                <p className="text-xs text-gray-500">{user?.email}</p>
-              </div>
+        <div className="border-t p-4">
+          <div className="flex items-center space-x-3 mb-3">
+            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+              <User className="w-4 h-4 text-blue-600" />
             </div>
-            <Button
-              onClick={logout}
-              variant="ghost"
-              size="sm"
-              className="text-gray-500 hover:text-red-600"
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {user?.username || user?.email}
+              </p>
+            </div>
+          </div>
+          <div className="flex space-x-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="flex-1"
+              onClick={() => router.push('/subscriptions')}
             >
+              <Crown className="w-4 h-4 mr-2" />
+              Подписка
+            </Button>
+            <Button variant="ghost" size="sm" onClick={handleLogout}>
               <LogOut className="w-4 h-4" />
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Main Chat Area */}
+      {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Top Bar */}
-        <div className="bg-white border-b border-gray-200 p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button
-                onClick={() => setSidebarOpen(true)}
-                variant="ghost"
-                size="sm"
-                className={`${sidebarOpen ? 'hidden' : 'block'}`}
-              >
-                <Menu className="w-4 h-4" />
-              </Button>
-              <h2 className="text-lg font-semibold text-gray-900">
-                {currentConversation?.title || 'Выберите разговор или создайте новый'}
-              </h2>
-            </div>
-          </div>
-        </div>
+        {/* Header */}
+        <header className="bg-white border-b px-4 py-3 flex items-center justify-between lg:justify-end">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSidebarOpen(true)}
+            className="lg:hidden"
+          >
+            <Menu className="w-4 h-4" />
+          </Button>
+        </header>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4">
+        {/* Chat Area */}
+        <div className="flex-1 flex flex-col">
           {messages.length === 0 ? (
-            <div className="h-full flex items-center justify-center">
+            <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
                 <Bot className="w-16 h-16 mx-auto mb-4 text-gray-400" />
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  Добро пожаловать в DreamTeamSAAS!
+                  Добро пожаловать в AI Assistant!
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  Начните разговор с ИИ-помощником для создания академических работ
+                  Начните разговор с ИИ-помощником
                 </p>
                 <Button 
-                  onClick={async () => {
-                    try {
-                      const { conversationsApi } = await import('@/lib/api');
-                      const newConversation = await conversationsApi.createConversation("Новый документ");
-                      router.push(`/editor/${newConversation.id}`);
-                    } catch (error) {
-                      console.error('Error creating document:', error);
-                    }
-                  }}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={startNewConversation}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Начать новый чат
@@ -344,77 +369,61 @@ export default function Dashboard() {
               </div>
             </div>
           ) : (
-            <div className="max-w-4xl mx-auto space-y-6">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {messages.map((message) => (
                 <motion.div
                   key={message.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`flex ${message.sender_type === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`flex max-w-3xl ${message.sender_type === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                      message.sender_type === 'user' 
-                        ? 'bg-blue-500 ml-3' 
-                        : 'bg-gray-500 mr-3'
+                  <div className={`max-w-xs lg:max-w-md xl:max-w-lg px-4 py-2 rounded-lg ${
+                    message.type === 'user'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white border shadow-sm'
+                  }`}>
+                    <p className="text-sm">{message.content}</p>
+                    <p className={`text-xs mt-1 ${
+                      message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
                     }`}>
-                      {message.sender_type === 'user' ? (
-                        <User className="w-4 h-4 text-white" />
-                      ) : (
-                        <Bot className="w-4 h-4 text-white" />
-                      )}
-                    </div>
-                    <div className={`px-4 py-3 rounded-2xl ${
-                      message.sender_type === 'user'
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-white border border-gray-200 text-gray-900'
-                    }`}>
-                      <p className="whitespace-pre-wrap">{message.content}</p>
-                      <p className={`text-xs mt-2 ${
-                        message.sender_type === 'user' ? 'text-blue-100' : 'text-gray-500'
-                      }`}>
-                        {new Date(message.created_at).toLocaleTimeString('ru-RU')}
-                      </p>
-                    </div>
+                      {message.timestamp.toLocaleTimeString('ru-RU', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                      })}
+                    </p>
                   </div>
                 </motion.div>
               ))}
               
-              {isSending && (
+              {isTyping && (
                 <div className="flex justify-start">
-                  <div className="flex">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-500 mr-3 flex items-center justify-center">
-                      <Bot className="w-4 h-4 text-white" />
-                    </div>
-                    <div className="bg-white border border-gray-200 px-4 py-3 rounded-2xl">
-                      <div className="flex items-center space-x-2">
-                        <div className="animate-pulse text-gray-500">ИИ печатает...</div>
-                      </div>
+                  <div className="bg-white border shadow-sm rounded-lg px-4 py-2">
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                     </div>
                   </div>
                 </div>
               )}
             </div>
           )}
-        </div>
 
-        {/* Input Area */}
-        <div className="bg-white border-t border-gray-200 p-4">
-          <div className="max-w-4xl mx-auto">
+          {/* Message Input */}
+          <div className="border-t bg-white p-4">
             <div className="flex space-x-4">
-              <textarea
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
+              <input
+                type="text"
+                value={currentMessage}
+                onChange={(e) => setCurrentMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Введите ваше сообщение..."
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                rows={1}
-                disabled={isSending}
+                placeholder="Введите сообщение..."
+                className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               <Button
                 onClick={sendMessage}
-                disabled={isSending || !inputMessage.trim()}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl"
+                disabled={isTyping || !currentMessage.trim()}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
               >
                 <Send className="w-4 h-4" />
               </Button>
@@ -422,6 +431,14 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Overlay for mobile sidebar */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
     </div>
   );
 }
