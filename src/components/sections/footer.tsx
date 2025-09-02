@@ -1,124 +1,80 @@
 "use client";
 
 import Link from "next/link";
-
-const footerSections = {
-  generators: [
-    "Генератор контента",
-    "Эссе генератор",
-    { label: "ИИ детектор", href: "/ai-detector" },
-    "Генератор",
-    "Генератор",
-    "Наш исследователь",
-    "Поддержка"
-  ],
-  resources: [
-    "Как использовать DreamTeamSAAS",
-    "Примеры",
-    "Генератор",
-    "Наш исследователь",
-    "Поддержка"
-  ],
-  tools: [
-    "Инструмент перефразирования",
-    "Инструмент проверки плагиата",
-    "Инструмент помощи в письме",
-    "Генератор заключений",
-    "Генератор цитат",
-    "Генератор библиографии",
-    "Генератор эссе",
-    "Генератор тезисов"
-  ],
-  citations: [
-    "Генератор цитат",
-    "Библиографический генератор",
-    "MLA генератор цитат",
-    "APA генератор цитат",
-    "Чикаго генератор цитат",
-    "Гарвард генератор цитат",
-    "Ванкувер генератор цитат",
-    "IEEE генератор цитат",
-    "Генератор цитат ACS",
-    "Генератор цитат ASA",
-    "APSA генератор цитат",
-    "Генератор цитат CSE"
-  ]
-};
+import { motion } from "framer-motion";
 
 export function Footer() {
   return (
-    <footer className="bg-gray-900 text-white py-12">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="bg-gray-50 border-t border-gray-200 py-12">
+      <div className="container mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Логотип и описание */}
           <div>
-            <h3 className="font-bold text-xl mb-4 text-white">DreamTeamSAAS</h3>
-            <p className="text-gray-400 mb-4 text-sm">
-              Сеть для создания исследований и письма с помощью ИИ
-            </p>
-            
-            <div className="mb-6">
-              <h4 className="font-semibold mb-3 text-white">Генераторы</h4>
-              <ul className="space-y-1">
-                {footerSections.generators.map((link, index) => (
-                  <li key={index}>
-                    <Link 
-                      href={typeof link === 'object' ? link.href : "#"} 
-                      className="text-gray-400 hover:text-white text-sm"
-                    >
-                      {typeof link === 'object' ? link.label : link}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">AI</span>
+              </div>
+              <span className="font-semibold text-gray-900">DreamTeam</span>
             </div>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              ИИ-помощник для создания качественных академических работ за минуты
+            </p>
           </div>
 
+          {/* Функционал */}
           <div>
-            <h4 className="font-semibold mb-3 text-white">Ресурсы</h4>
-            <ul className="space-y-1">
-              {footerSections.resources.map((link, index) => (
-                <li key={index}>
-                  <Link href="#" className="text-gray-400 hover:text-white text-sm">
-                    {link}
-                  </Link>
-                </li>
-              ))}
+            <h4 className="font-semibold text-gray-900 mb-4">Возможности</h4>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/dashboard" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
+                  Мои разговоры
+                </Link>
+              </li>
+              <li>
+                <Link href="/subscription" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
+                  Тарифы
+                </Link>
+              </li>
             </ul>
           </div>
 
+          {/* Поддержка */}
           <div>
-            <h4 className="font-semibold mb-3 text-white">Инструменты</h4>
-            <ul className="space-y-1">
-              {footerSections.tools.map((link, index) => (
-                <li key={index}>
-                  <Link href="#" className="text-gray-400 hover:text-white text-sm">
-                    {link}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-3 text-white">Генераторы цитат</h4>
-            <ul className="space-y-1">
-              {footerSections.citations.map((link, index) => (
-                <li key={index}>
-                  <Link href="#" className="text-gray-400 hover:text-white text-sm">
-                    {link}
-                  </Link>
-                </li>
-              ))}
+            <h4 className="font-semibold text-gray-900 mb-4">Поддержка</h4>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/support" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
+                  Помощь
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
+                  Политика конфиденциальности
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
+                  Условия использования
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
-          <div className="flex space-x-6 mb-4 md:mb-0">
-            <Link href="#" className="hover:text-white">Условия использования</Link>
-            <Link href="#" className="hover:text-white">Политика конфиденциальности</Link>
-          </div>
-          <p>&copy; DreamTeamSAAS 2024</p>
+        {/* Нижняя часть */}
+        <div className="border-t border-gray-200 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-gray-500 text-sm">
+            &copy; 2025 DreamTeam. Все права защищены.
+          </p>
+          
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex items-center gap-2 mt-4 md:mt-0"
+          >
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="text-gray-500 text-sm">Сервис работает</span>
+          </motion.div>
         </div>
       </div>
     </footer>
