@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Bot, MessageSquare, LogIn, UserPlus, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Navbar, NavbarBrand, NavbarToggle, NavbarCollapse, NavbarLink, Button } from 'flowbite-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -31,31 +31,28 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Bot className="w-8 h-8 text-blue-600" />
-            <span className="text-xl font-bold text-gray-900">AI Assistant</span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              onClick={() => router.push('/auth/login')}
-              className="flex items-center space-x-2"
-            >
-              <LogIn className="w-4 h-4" />
-              <span>Войти</span>
-            </Button>
-            <Button 
-              onClick={() => router.push('/auth/register')}
-              className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700"
-            >
-              <UserPlus className="w-4 h-4" />
-              <span>Регистрация</span>
-            </Button>
-          </div>
+      <Navbar fluid rounded className="border-b bg-white/80 backdrop-blur-sm">
+        <NavbarBrand href="#" className="ml-2">
+          <Bot className="w-8 h-8 text-blue-600" />
+          <span className="self-center whitespace-nowrap text-xl font-bold text-gray-900 ml-2">AI Assistant</span>
+        </NavbarBrand>
+        <div className="flex md:order-2 gap-2 mr-2">
+          <Button color="light" onClick={() => router.push('/auth/login')}>
+            <span className="flex items-center gap-2"><LogIn className="w-4 h-4" /> Войти</span>
+          </Button>
+          <Button color="blue" onClick={() => router.push('/auth/register')}>
+            <span className="flex items-center gap-2"><UserPlus className="w-4 h-4" /> Регистрация</span>
+          </Button>
+          <NavbarToggle />
         </div>
-      </header>
+        <NavbarCollapse>
+          <NavbarLink href="#" active>
+            Главная
+          </NavbarLink>
+          <NavbarLink href="/subscriptions">Тарифы</NavbarLink>
+          <NavbarLink href="/support">Поддержка</NavbarLink>
+        </NavbarCollapse>
+      </Navbar>
 
       {/* Hero Section */}
       <main className="container mx-auto px-4 py-20">
@@ -80,20 +77,10 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button 
-                size="lg"
-                onClick={() => router.push('/auth/register')}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg"
-              >
-                <MessageSquare className="w-5 h-5 mr-2" />
-                Начать общение
+              <Button color="blue" size="lg" onClick={() => router.push('/auth/register')}>
+                <span className="flex items-center"><MessageSquare className="w-5 h-5 mr-2" /> Начать общение</span>
               </Button>
-              <Button 
-                size="lg" 
-                variant="outline"
-                onClick={() => router.push('/auth/login')}
-                className="border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-3 text-lg"
-              >
+              <Button color="light" size="lg" onClick={() => router.push('/auth/login')}>
                 Войти в аккаунт
               </Button>
             </div>
