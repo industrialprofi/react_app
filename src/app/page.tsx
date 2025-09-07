@@ -1,12 +1,14 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
+import { Suspense, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Bot, MessageSquare, LogIn, UserPlus, Sparkles } from 'lucide-react';
 import { Navbar, NavbarBrand, NavbarToggle, NavbarCollapse, NavbarLink, Button } from 'flowbite-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
 
-export default function Home() {
+function HomeClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -114,5 +116,13 @@ export default function Home() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Загрузка...</div>}>
+      <HomeClient />
+    </Suspense>
   );
 }

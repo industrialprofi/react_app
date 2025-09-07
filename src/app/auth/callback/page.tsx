@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+// Prevent prerender errors with client-only hooks like useSearchParams
+export const dynamic = 'force-dynamic';
+
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../../lib/auth-context";
 import { motion } from "framer-motion";
 import { Spinner, Button } from "flowbite-react";
 
-export default function AuthCallbackPage() {
+function AuthCallbackClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
@@ -104,5 +107,17 @@ export default function AuthCallbackPage() {
         )}
       </motion.div>
     </div>
+  );
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white flex items-center justify-center p-4">
+        <Spinner size="xl" />
+      </div>
+    }>
+      <AuthCallbackClient />
+    </Suspense>
   );
 }
