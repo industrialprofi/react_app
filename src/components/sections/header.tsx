@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Button } from "../ui/button";
+import { Button } from "flowbite-react";
 import { useAuth } from "../../lib/auth-context";
 import { motion } from "framer-motion";
 
@@ -31,7 +31,7 @@ export function Header() {
 
           {/* Центральная навигация */}
           <nav className="hidden md:flex items-center gap-8">
-            <Link href="/subscription" className="text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
+            <Link href="/subscriptions" className="text-gray-600 hover:text-gray-900 transition-colors text-sm font-medium">
               Тарифы
             </Link>
           </nav>
@@ -41,23 +41,23 @@ export function Header() {
             {isAuthenticated ? (
               <>
                 <Link href="/dashboard">
-                  <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+                  <Button color="light" size="sm" className="text-gray-600">
                     Кабинет
                   </Button>
                 </Link>
-                <Button variant="ghost" size="sm" onClick={logout} className="text-gray-600 hover:text-gray-900">
+                <Button color="light" size="sm" onClick={logout} className="text-gray-600">
                   Выйти
                 </Button>
               </>
             ) : (
               <>
-                <Link href="/login">
-                  <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900">
+                <Link href="/auth/login">
+                  <Button color="light" size="sm" className="text-gray-600">
                     Войти
                   </Button>
                 </Link>
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0 shadow-sm">
+                  <Button size="sm" color="blue">
                     Начать
                   </Button>
                 </motion.div>
@@ -87,11 +87,11 @@ export function Header() {
             className="md:hidden py-4 border-t border-gray-100"
           >
             <div className="flex flex-col gap-3">
-              <Link href="/subscription" className="text-gray-600 py-2" onClick={() => setIsMenuOpen(false)}>
+              <Link href="/subscriptions" className="text-gray-600 py-2" onClick={() => setIsMenuOpen(false)}>
                 Тарифы
               </Link>
               {!isAuthenticated && (
-                <Link href="/login" className="text-gray-600 py-2" onClick={() => setIsMenuOpen(false)}>
+                <Link href="/auth/login" className="text-gray-600 py-2" onClick={() => setIsMenuOpen(false)}>
                   Войти
                 </Link>
               )}

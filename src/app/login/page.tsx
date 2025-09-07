@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Button } from "../../components/ui/button";
+import { Button, TextInput, Label, Alert, Spinner } from "flowbite-react";
 import { Eye, EyeOff, Mail, Lock, User, Chrome } from "lucide-react";
 import { useAuth } from "../../lib/auth-context";
 
@@ -96,34 +96,34 @@ export default function LoginPage() {
 
           <div className="p-8 pt-0">
             {error && (
-                <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl mb-6 text-sm">
-                    {error}
-                </div>
+              <Alert color="failure" className="mb-6">
+                {error}
+              </Alert>
             )}
             {successMessage && (
-                <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-xl mb-6 text-sm">
-                    {successMessage}
-                </div>
+              <Alert color="success" className="mb-6">
+                {successMessage}
+              </Alert>
             )}
             <form onSubmit={handleSubmit} className="space-y-5">
               {!isLogin && (
                 <div>
                   <div className="relative">
-                    <input type="text" id="username" name="username" value={formData.username} onChange={handleInputChange} required className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all text-gray-700 placeholder-gray-400" placeholder="Имя пользователя" />
                     <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <TextInput type="text" id="username" name="username" value={formData.username} onChange={handleInputChange} required className="w-full pl-12 pr-4 py-4 rounded-2xl" placeholder="Имя пользователя" />
                   </div>
                 </div>
               )}
               <div>
                 <div className="relative">
-                  <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} required className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all text-gray-700 placeholder-gray-400" placeholder="your@email.com" />
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <TextInput type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} required className="w-full pl-12 pr-4 py-4 rounded-2xl" placeholder="your@email.com" />
                 </div>
               </div>
               <div>
                 <div className="relative">
-                  <input type={showPassword ? "text" : "password"} id="password" name="password" value={formData.password} onChange={handleInputChange} required className="w-full pl-12 pr-12 py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all text-gray-700 placeholder-gray-400" placeholder="Пароль" />
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <TextInput type={showPassword ? "text" : "password"} id="password" name="password" value={formData.password} onChange={handleInputChange} required className="w-full pl-12 pr-12 py-4 rounded-2xl" placeholder="Пароль" />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -132,8 +132,8 @@ export default function LoginPage() {
               {!isLogin && (
                 <div>
                   <div className="relative">
-                    <input type="password" id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleInputChange} required className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all text-gray-700 placeholder-gray-400" placeholder="Подтвердите пароль" />
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <TextInput type="password" id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleInputChange} required className="w-full pl-12 pr-4 py-4 rounded-2xl" placeholder="Подтвердите пароль" />
                   </div>
                 </div>
               )}
@@ -144,12 +144,9 @@ export default function LoginPage() {
                   </button>
                 </div>
               )}
-              <Button type="submit" disabled={isLoading} className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] disabled:opacity-70 disabled:scale-100">
+              <Button type="submit" color="blue" disabled={isLoading} className="w-full py-4 rounded-2xl text-lg font-semibold">
                 {isLoading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                    Обработка...
-                  </div>
+                  <span className="flex items-center gap-2"><Spinner size="sm" /> Обработка...</span>
                 ) : (isLogin ? "Войти" : "Создать аккаунт")}
               </Button>
             </form>

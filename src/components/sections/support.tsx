@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown, ChevronUp, MessageCircle, ArrowRight, Plus } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button, TextInput, Textarea, Alert } from "flowbite-react";
 import Head from "next/head";
 
 const faqData = [
@@ -64,7 +64,7 @@ export function Support() {
       message: ""
     });
     // Показать сообщение об успешной отправке
-    alert("Ваше сообщение успешно отправлено! Мы свяжемся с вами в ближайшее время.");
+    setFoundAnswer(null);
   };
 
   const handleFeedback = (found: boolean) => {
@@ -108,17 +108,16 @@ export function Support() {
             Только для поддержки.
           </p>
           <div className="flex justify-center">
-            <button
-              onClick={() => window.location.href = "/"}
-              className="group flex items-center gap-3 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 px-6 py-3.5 rounded-2xl hover:from-blue-100 hover:to-indigo-100 hover:shadow-lg transition-all duration-300 border border-blue-200/50 hover:border-blue-300"
-            >
-              <MessageCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              <span className="font-semibold">Чтобы начать писать</span>
-              <span className="font-bold underline hover:no-underline flex items-center gap-1 text-blue-600 group-hover:text-blue-800">
-                нажмите здесь
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <Button color="light" onClick={() => window.location.href = "/"} className="group">
+              <span className="flex items-center gap-3">
+                <MessageCircle className="w-5 h-5" />
+                <span className="font-semibold">Чтобы начать писать</span>
+                <span className="font-bold underline hover:no-underline flex items-center gap-1">
+                  нажмите здесь
+                  <ArrowRight className="w-4 h-4" />
+                </span>
               </span>
-            </button>
+            </Button>
           </div>
         </motion.div>
 
@@ -201,14 +200,13 @@ export function Support() {
                 <label htmlFor="email" className="block text-sm font-semibold text-gray-800 mb-3">
                   Email адрес
                 </label>
-                <input
+                <TextInput
                   type="email"
                   id="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-5 py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 text-gray-700 placeholder-gray-400 hover:border-gray-300 focus:outline-none"
                   placeholder="your@email.com"
                 />
               </div>
@@ -217,14 +215,13 @@ export function Support() {
                 <label htmlFor="subject" className="block text-sm font-semibold text-gray-800 mb-3">
                   Тема обращения
                 </label>
-                <input
+                <TextInput
                   type="text"
                   id="subject"
                   name="subject"
                   value={formData.subject}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-5 py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 text-gray-700 placeholder-gray-400 hover:border-gray-300 focus:outline-none"
                   placeholder="Кратко опишите вашу проблему"
                 />
               </div>
@@ -234,24 +231,19 @@ export function Support() {
               <label htmlFor="message" className="block text-sm font-semibold text-gray-800 mb-3">
                 Сообщение
               </label>
-              <textarea
+              <Textarea
                 id="message"
                 name="message"
                 value={formData.message}
                 onChange={handleInputChange}
                 required
                 rows={6}
-                className="w-full px-5 py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 text-gray-700 placeholder-gray-400 hover:border-gray-300 focus:outline-none resize-vertical"
                 placeholder="Подробно опишите вашу проблему или вопрос..."
               />
             </div>
 
             <div className="text-center pt-4">
-              <Button
-                type="submit"
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-4 px-12 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-200"
-                size="lg"
-              >
+              <Button type="submit" color="blue" size="lg">
                 Отправить сообщение
               </Button>
             </div>
@@ -268,26 +260,10 @@ export function Support() {
         >
           <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-gray-900 to-blue-900 bg-clip-text text-transparent">Нашли ли вы ответ на свой вопрос?</h3>
           <div className="flex justify-center gap-6">
-            <Button
-              variant="outline"
-              className={`px-10 py-4 text-lg font-semibold rounded-2xl transition-all duration-300 border-2 ${
-                foundAnswer === true
-                  ? 'bg-gradient-to-r from-green-100 to-emerald-100 border-green-300 text-green-800 shadow-lg transform scale-105'
-                  : 'bg-white border-gray-200 text-gray-700 hover:bg-green-50 hover:border-green-300 hover:shadow-md'
-              }`}
-              onClick={() => handleFeedback(true)}
-            >
+            <Button color="success" outline onClick={() => handleFeedback(true)}>
               ✅ Да
             </Button>
-            <Button
-              variant="outline"
-              className={`px-10 py-4 text-lg font-semibold rounded-2xl transition-all duration-300 border-2 ${
-                foundAnswer === false
-                  ? 'bg-gradient-to-r from-red-100 to-pink-100 border-red-300 text-red-800 shadow-lg transform scale-105'
-                  : 'bg-white border-gray-200 text-gray-700 hover:bg-red-50 hover:border-red-300 hover:shadow-md'
-              }`}
-              onClick={() => handleFeedback(false)}
-            >
+            <Button color="failure" outline onClick={() => handleFeedback(false)}>
               ❌ Нет
             </Button>
           </div>

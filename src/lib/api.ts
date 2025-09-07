@@ -27,7 +27,7 @@ interface ChatResponse {
 }
 
 // Вспомогательная функция для получения заголовков с токеном
-const getAuthHeaders = () => {
+export const getAuthHeaders = () => {
   const token = localStorage.getItem('auth_token');
   return {
     'Content-Type': 'application/json',

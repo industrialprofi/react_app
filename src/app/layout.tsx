@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "../lib/auth-context";
 import React from "react";
+import 'flowbite';
 
 export const metadata: Metadata = {
   metadataBase: new URL('http://localhost:3000'),

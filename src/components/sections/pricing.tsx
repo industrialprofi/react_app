@@ -2,7 +2,7 @@
 
 import { Check } from "lucide-react";
 import { motion } from "framer-motion";
-import { Button } from "../ui/button";
+import { Button } from "flowbite-react";
 
 interface Plan {
   name: string;
@@ -102,13 +102,7 @@ export function Pricing() {
                   ))}
                 </ul>
                 
-                <Button
-                  className={`w-full py-3 rounded-2xl font-semibold transition-all duration-300 ${
-                    plan.featured 
-                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white' 
-                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                  }`}
-                >
+                <Button color={plan.featured ? 'blue' : 'light'} className="w-full py-3 rounded-2xl font-semibold">
                   Выбрать план
                 </Button>
               </motion.div>

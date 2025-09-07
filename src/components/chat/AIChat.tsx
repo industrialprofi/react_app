@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "../ui/button";
+import { Button } from "flowbite-react";
 import { chatApi } from "../../lib/api";
 import { useAuth } from "../../lib/auth-context";
 
@@ -203,10 +203,10 @@ export function AIChat() {
             />
           </div>
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button
+            <Button color="blue"
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || !isAuthenticated || isLoading}
-              className="h-full px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 rounded-2xl disabled:opacity-50"
+              className="h-full"
             >
               {isLoading ? (
                 <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
@@ -220,7 +220,7 @@ export function AIChat() {
         {!isAuthenticated && (
           <p className="text-sm text-gray-500 mt-3 text-center">
             <span>Нужно </span>
-            <a href="/login" className="text-blue-600 hover:underline">войти в систему</a>
+            <a href="/auth/login" className="text-blue-600 hover:underline">войти в систему</a>
             <span> для общения с AI</span>
           </p>
         )}

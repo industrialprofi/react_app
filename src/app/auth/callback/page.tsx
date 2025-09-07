@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../../../lib/auth-context";
 import { motion } from "framer-motion";
+import { Spinner, Button } from "flowbite-react";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -64,10 +65,8 @@ export default function AuthCallbackPage() {
         transition={{ duration: 0.5 }}
         className="text-center"
       >
-        <div className="w-16 h-16 mx-auto mb-6">
-          {status === 'loading' && (
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
-          )}
+        <div className="w-16 h-16 mx-auto mb-6 flex items-center justify-center">
+          {status === 'loading' && <Spinner size="xl" />}
           {status === 'success' && (
             <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,12 +99,7 @@ export default function AuthCallbackPage() {
 
         {status === 'error' && (
           <div className="mt-6">
-            <button
-              onClick={() => router.push('/auth/login')}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
-            >
-              Вернуться к входу
-            </button>
+            <Button color="blue" onClick={() => router.push('/auth/login')}>Вернуться к входу</Button>
           </div>
         )}
       </motion.div>
