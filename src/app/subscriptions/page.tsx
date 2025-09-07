@@ -6,6 +6,7 @@ import { Bot, Crown, Check, ArrowLeft, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import config from '@/lib/config';
+import { getAuthHeaders } from '@/lib/api';
 
 interface SubscriptionPlan {
   id: number;
@@ -43,30 +44,37 @@ export default function SubscriptionsPage() {
 
   const loadData = async () => {
     try {
-      const token = localStorage.getItem('auth_token');
-      
       // Load user data
       const userResponse = await fetch(`${config.API_BASE_URL}/auth/me`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: getAuthHeaders()
       });
       if (userResponse.ok) {
         setUser(await userResponse.json());
+      } else if (userResponse.status === 401) {
+        localStorage.removeItem('auth_token');
+        router.push('/auth/login');
+        return;
       }
 
       // Load subscription plans
-      const plansResponse = await fetch(`${config.API_BASE_URL}/subscriptions/plans`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const plansResponse = await fetch(`${config.API_BASE_URL}/subscriptions/plans`);
       if (plansResponse.ok) {
         setPlans(await plansResponse.json());
       }
 
       // Load current subscription
       const subscriptionResponse = await fetch(`${config.API_BASE_URL}/subscriptions/my-subscription`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: getAuthHeaders()
       });
       if (subscriptionResponse.ok) {
         setCurrentSubscription(await subscriptionResponse.json());
+      } else if (subscriptionResponse.status === 404) {
+        // No active subscription — leave as null
+        setCurrentSubscription(null);
+      } else if (subscriptionResponse.status === 401) {
+        localStorage.removeItem('auth_token');
+        router.push('/auth/login');
+        return;
       }
     } catch (error) {
       console.error('Error loading subscription data:', error);

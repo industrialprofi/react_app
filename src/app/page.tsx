@@ -3,10 +3,30 @@
 import { motion } from 'framer-motion';
 import { Bot, MessageSquare, LogIn, UserPlus, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Home() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Handle OAuth callback that may redirect to the root with token params
+  useEffect(() => {
+    const token = searchParams.get('token');
+    const tokenType = searchParams.get('token_type');
+    const error = searchParams.get('error');
+
+    if (error) {
+      // Redirect to login on error
+      router.push('/auth/login');
+      return;
+    }
+
+    if (token && tokenType === 'bearer') {
+      localStorage.setItem('auth_token', token);
+      router.push('/dashboard');
+    }
+  }, [router, searchParams]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">

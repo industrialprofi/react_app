@@ -6,6 +6,7 @@ import { Bot, Plus, Settings, LogOut, User, Crown, Menu, X, Trash2, Send } from 
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import config from '@/lib/config';
+import { getAuthHeaders } from '@/lib/api';
 
 interface Conversation {
   id: number;
@@ -58,14 +59,16 @@ export default function Dashboard() {
 
   const loadUserData = async () => {
     try {
-      const token = localStorage.getItem('auth_token');
       const response = await fetch(`${config.API_BASE_URL}/auth/me`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: getAuthHeaders(),
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem('auth_token');
+          router.push('/auth/login');
+          return;
+        }
         throw new Error('Failed to load user data');
       }
 
@@ -82,16 +85,18 @@ export default function Dashboard() {
 
   const loadConversations = async () => {
     try {
-      const token = localStorage.getItem('auth_token');
       const response = await fetch(`${config.API_BASE_URL}/conversations`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: getAuthHeaders(),
       });
 
       if (response.ok) {
         const data = await response.json();
         setConversations(data);
+      } else if (response.status === 401) {
+        localStorage.removeItem('auth_token');
+        router.push('/auth/login');
+      } else {
+        console.error('Failed to load conversations:', response.statusText);
       }
     } catch (error) {
       console.error('Error loading conversations:', error);
@@ -100,13 +105,9 @@ export default function Dashboard() {
 
   const startNewConversation = async () => {
     try {
-      const token = localStorage.getItem('auth_token');
       const response = await fetch(`${config.API_BASE_URL}/conversations`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ title: "Новый чат" })
       });
 
@@ -115,6 +116,10 @@ export default function Dashboard() {
         setConversations(prev => [newConversation, ...prev]);
         setCurrentConversationId(newConversation.id);
         setMessages([]);
+      } else if (response.status === 401) {
+        router.push('/auth/login');
+      } else {
+        console.error('Failed to create conversation:', response.statusText);
       }
     } catch (error) {
       console.error('Error creating conversation:', error);
@@ -151,12 +156,12 @@ export default function Dashboard() {
     setIsTyping(true);
 
     try {
-      const token = localStorage.getItem('auth_token');
-      const response = await fetch(`${config.API_BASE_URL}/chat`, {
+      // Use SSE streaming endpoint
+      const response = await fetch(`${config.API_BASE_URL}/chat/stream`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          ...getAuthHeaders(),
+          Accept: 'text/event-stream'
         },
         body: JSON.stringify({
           message: messageToSend,
@@ -164,23 +169,107 @@ export default function Dashboard() {
         })
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        const assistantMessage: ChatMessage = {
-          id: data.message_id.toString(),
+      if (response.status === 401) {
+        router.push('/auth/login');
+        return;
+      }
+      if (response.status === 402) {
+        router.push('/subscriptions');
+        return;
+      }
+      if (response.status === 429) {
+        const errorMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
           type: 'assistant',
-          content: data.response,
+          content: 'Вы превысили лимит запросов. Попробуйте позже или обновите план подписки.',
           timestamp: new Date()
         };
+        setMessages(prev => [...prev, errorMessage]);
+        return;
+      }
+      if (response.status === 404) {
+        const errorMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          type: 'assistant',
+          content: 'Разговор не найден. Создайте новый чат и попробуйте снова.',
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, errorMessage]);
+        return;
+      }
+      if (!response.ok || !response.body) {
+        throw new Error('Failed to start streaming');
+      }
 
-        setMessages(prev => [...prev, assistantMessage]);
-        
-        if (data.conversation_id && !currentConversationId) {
-          setCurrentConversationId(data.conversation_id);
-          loadConversations();
+      // Create placeholder assistant message for streaming
+      const streamMessageId = (Date.now() + 2).toString();
+      setMessages(prev => [
+        ...prev,
+        { id: streamMessageId, type: 'assistant', content: '', timestamp: new Date() }
+      ]);
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+
+      // Helper to apply delta chunk to the last assistant message
+      const applyDelta = (delta: string) => {
+        if (!delta) return;
+        setMessages(prev => prev.map(m => (
+          m.id === streamMessageId ? { ...m, content: m.content + delta } : m
+        )));
+      };
+
+      // Parse SSE events: split by double newlines, extract lines starting with 'data:'
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        let sepIndex;
+        // Process complete SSE events
+        while ((sepIndex = buffer.indexOf('\n\n')) !== -1) {
+          const rawEvent = buffer.slice(0, sepIndex);
+          buffer = buffer.slice(sepIndex + 2);
+
+          const lines = rawEvent.split('\n');
+          const dataLines = lines
+            .filter(l => l.startsWith('data:'))
+            .map(l => l.replace(/^data:\s?/, ''));
+          const dataPayload = dataLines.join('\n');
+
+          if (dataPayload === '[DONE]') {
+            // end of stream marker
+            break;
+          }
+
+          // Some servers may send JSON per chunk; try parse, fallback to raw text
+          try {
+            const parsed = JSON.parse(dataPayload);
+            // Accept either { token: '...' } or { content: '...' }
+            const delta = parsed.token || parsed.content || '';
+            applyDelta(delta);
+          } catch (_) {
+            applyDelta(dataPayload);
+          }
         }
-      } else {
-        throw new Error('Failed to send message');
+      }
+
+      // Ensure any remaining buffered text is applied
+      if (buffer.trim()) {
+        try {
+          const parsed = JSON.parse(buffer.trim());
+          const delta = parsed.token || parsed.content || '';
+          applyDelta(delta);
+        } catch (_) {
+          applyDelta(buffer.trim());
+        }
+        buffer = '';
+      }
+
+      // Optionally reload conversations to reflect latest state
+      if (!currentConversationId) {
+        loadConversations();
       }
     } catch (error) {
       console.error('Error sending message:', error);
@@ -198,12 +287,9 @@ export default function Dashboard() {
 
   const deleteConversation = async (conversationId: number) => {
     try {
-      const token = localStorage.getItem('auth_token');
       const response = await fetch(`${config.API_BASE_URL}/conversations/${conversationId}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: getAuthHeaders(),
       });
 
       if (response.ok) {
@@ -213,6 +299,8 @@ export default function Dashboard() {
           setCurrentConversationId(null);
           setMessages([]);
         }
+      } else if (response.status === 401) {
+        router.push('/auth/login');
       }
     } catch (error) {
       console.error('Error deleting conversation:', error);
