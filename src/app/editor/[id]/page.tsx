@@ -17,7 +17,7 @@ import {
   Clock,
   User
 } from "lucide-react";
-import { Button } from "../../../components/ui/button";
+import { Button, Spinner } from "flowbite-react";
 
 interface Document {
   id: number;
@@ -42,7 +42,7 @@ export default function EditorPage() {
   // Redirect if not authenticated
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.push('/login');
+      router.push('/auth/login');
     }
   }, [isAuthenticated, isLoading, router]);
 
@@ -193,7 +193,7 @@ export default function EditorPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+        <Spinner size="xl" />
       </div>
     );
   }
@@ -210,19 +210,11 @@ export default function EditorPage() {
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl font-bold text-gray-900">Мои документы</h1>
-            <Button
-              onClick={() => setSidebarOpen(false)}
-              variant="ghost"
-              size="sm"
-              className="md:hidden"
-            >
+            <Button color="light" onClick={() => setSidebarOpen(false)} size="sm" className="md:hidden">
               <X className="w-4 h-4" />
             </Button>
           </div>
-          <Button
-            onClick={createNewDocument}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-          >
+          <Button color="blue" onClick={createNewDocument} className="w-full">
             <Plus className="w-4 h-4 mr-2" />
             Новый документ
           </Button>
@@ -253,14 +245,13 @@ export default function EditorPage() {
                       {new Date(doc.created_at).toLocaleDateString('ru-RU')}
                     </div>
                   </div>
-                  <Button
+                  <Button color="light"
                     onClick={(e) => {
                       e.stopPropagation();
                       deleteDocument(doc.id);
                     }}
-                    variant="ghost"
                     size="sm"
-                    className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700"
+                    className="opacity-0 group-hover:opacity-100"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
@@ -290,12 +281,7 @@ export default function EditorPage() {
         <div className="bg-white border-b border-gray-200 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <Button
-                onClick={() => setSidebarOpen(true)}
-                variant="ghost"
-                size="sm"
-                className={`${sidebarOpen ? 'hidden' : 'block'}`}
-              >
+              <Button color="light" onClick={() => setSidebarOpen(true)} size="sm" className={`${sidebarOpen ? 'hidden' : 'block'}`}>
                 <Menu className="w-4 h-4" />
               </Button>
               
@@ -320,12 +306,7 @@ export default function EditorPage() {
                     {title}
                   </h2>
                 )}
-                <Button
-                  onClick={() => setIsEditing(true)}
-                  variant="ghost"
-                  size="sm"
-                  className="opacity-50 hover:opacity-100"
-                >
+                <Button color="light" onClick={() => setIsEditing(true)} size="sm" className="opacity-50 hover:opacity-100">
                   <Edit3 className="w-4 h-4" />
                 </Button>
               </div>
@@ -333,20 +314,11 @@ export default function EditorPage() {
 
             {/* Actions */}
             <div className="flex items-center space-x-2">
-              <Button
-                onClick={exportDocument}
-                variant="ghost"
-                size="sm"
-                className="text-gray-600 hover:text-gray-900"
-              >
+              <Button color="light" onClick={exportDocument} size="sm">
                 <Download className="w-4 h-4 mr-2" />
                 Экспорт
               </Button>
-              <Button
-                onClick={saveDocument}
-                disabled={isSaving}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
+              <Button color="blue" onClick={saveDocument} disabled={isSaving}>
                 <Save className="w-4 h-4 mr-2" />
                 {isSaving ? 'Сохранение...' : 'Сохранить'}
               </Button>

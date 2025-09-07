@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Button } from "../../components/ui/button";
+import { Button } from "flowbite-react";
 import { Eye, EyeOff, Mail, Lock, User, Chrome } from "lucide-react";
 import { useAuth } from "../../lib/auth-context";
 
@@ -144,7 +144,7 @@ export default function LoginPage() {
                   </button>
                 </div>
               )}
-              <Button type="submit" disabled={isLoading} className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] disabled:opacity-70 disabled:scale-100">
+              <Button type="submit" color="blue" disabled={isLoading} className="w-full py-4 rounded-2xl text-lg font-semibold">
                 {isLoading ? (
                   <div className="flex items-center gap-2">
                     <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>

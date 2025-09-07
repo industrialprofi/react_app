@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { AIChat } from "../chat/AIChat";
 import Link from "next/link";
-import { Button } from "../ui/button";
+import { Button } from "flowbite-react";
 
 export function Hero() {
   const features = [
@@ -83,13 +83,13 @@ export function Hero() {
                 приоритетная поддержка, экспорт в различные форматы
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/subscription">
-                  <Button className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-xl font-semibold">
+                <Link href="/subscriptions">
+                  <Button color="light" className="px-8 py-3 rounded-xl font-semibold">
                     Посмотреть тарифы
                   </Button>
                 </Link>
                 <Link href="/dashboard">
-                  <Button variant="outline" className="border-white text-white hover:bg-white/10 px-8 py-3 rounded-xl font-semibold">
+                  <Button color="light" outline className="px-8 py-3 rounded-xl font-semibold">
                     Мои разговоры
                   </Button>
                 </Link>

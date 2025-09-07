@@ -31,7 +31,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/subscription" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
+                <Link href="/subscriptions" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
                   Тарифы
                 </Link>
               </li>

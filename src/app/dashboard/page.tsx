@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Bot, Plus, Settings, LogOut, User, Crown, Menu, X, Trash2, Send } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button, Spinner, TextInput } from 'flowbite-react';
 import { useRouter } from 'next/navigation';
 import config from '@/lib/config';
 import { getAuthHeaders } from '@/lib/api';
@@ -322,7 +322,7 @@ export default function Dashboard() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        <Spinner size="xl" />
       </div>
     );
   }
@@ -336,22 +336,14 @@ export default function Dashboard() {
             <Bot className="w-8 h-8 text-blue-600" />
             <span className="text-lg font-semibold">AI Assistant</span>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarOpen(false)}
-            className="lg:hidden"
-          >
+          <Button color="light" size="sm" onClick={() => setSidebarOpen(false)} className="lg:hidden">
             <X className="w-4 h-4" />
           </Button>
         </div>
 
         <div className="flex-1 overflow-y-auto">
           <div className="p-4">
-            <Button
-              onClick={startNewConversation}
-              className="w-full mb-4 bg-blue-600 hover:bg-blue-700"
-            >
+            <Button color="blue" onClick={startNewConversation} className="w-full mb-4">
               <Plus className="w-4 h-4 mr-2" />
               Новый чат
             </Button>
@@ -376,14 +368,13 @@ export default function Dashboard() {
                         {new Date(conversation.created_at).toLocaleDateString('ru-RU')}
                       </p>
                     </div>
-                    <Button
+                    <Button color="light"
                       onClick={(e) => {
                         e.stopPropagation();
                         deleteConversation(conversation.id);
                       }}
-                      variant="ghost"
                       size="sm"
-                      className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700"
+                      className="opacity-0 group-hover:opacity-100"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -406,16 +397,11 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="flex space-x-2">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="flex-1"
-              onClick={() => router.push('/subscriptions')}
-            >
+            <Button color="light" size="sm" className="flex-1" onClick={() => router.push('/subscriptions')}>
               <Crown className="w-4 h-4 mr-2" />
               Подписка
             </Button>
-            <Button variant="ghost" size="sm" onClick={handleLogout}>
+            <Button color="light" size="sm" onClick={handleLogout}>
               <LogOut className="w-4 h-4" />
             </Button>
           </div>
@@ -426,12 +412,7 @@ export default function Dashboard() {
       <div className="flex-1 flex flex-col">
         {/* Header */}
         <header className="bg-white border-b px-4 py-3 flex items-center justify-between lg:justify-end">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarOpen(true)}
-            className="lg:hidden"
-          >
+          <Button color="light" size="sm" onClick={() => setSidebarOpen(true)} className="lg:hidden">
             <Menu className="w-4 h-4" />
           </Button>
         </header>
@@ -448,10 +429,7 @@ export default function Dashboard() {
                 <p className="text-gray-600 mb-6">
                   Начните разговор с ИИ-помощником
                 </p>
-                <Button 
-                  onClick={startNewConversation}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                >
+                <Button color="blue" onClick={startNewConversation}>
                   <Plus className="w-4 h-4 mr-2" />
                   Начать новый чат
                 </Button>
@@ -487,11 +465,7 @@ export default function Dashboard() {
               {isTyping && (
                 <div className="flex justify-start">
                   <div className="bg-white border shadow-sm rounded-lg px-4 py-2">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                    </div>
+                    <Spinner size="sm" />
                   </div>
                 </div>
               )}
@@ -501,19 +475,15 @@ export default function Dashboard() {
           {/* Message Input */}
           <div className="border-t bg-white p-4">
             <div className="flex space-x-4">
-              <input
+              <TextInput
                 type="text"
                 value={currentMessage}
                 onChange={(e) => setCurrentMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Введите сообщение..."
-                className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1"
               />
-              <Button
-                onClick={sendMessage}
-                disabled={isTyping || !currentMessage.trim()}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
+              <Button color="blue" onClick={sendMessage} disabled={isTyping || !currentMessage.trim()}>
                 <Send className="w-4 h-4" />
               </Button>
             </div>
