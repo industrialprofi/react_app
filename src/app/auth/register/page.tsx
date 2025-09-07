@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Bot, Mail, Lock, User, Eye, EyeOff, Github } from 'lucide-react';
-import { Button, TextInput, Label, Spinner, Alert } from 'flowbite-react';
+import { Mail, Lock, User, Eye, EyeOff, Github } from 'lucide-react';
+import { Button, TextInput, Label, Spinner, Alert, Card } from 'flowbite-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import config from '@/lib/config';
@@ -54,23 +54,17 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.4 }}
         className="w-full max-w-md"
       >
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="flex justify-center mb-4">
-              <div className="p-3 bg-blue-100 rounded-full">
-                <Bot className="w-8 h-8 text-blue-600" />
-              </div>
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Создать аккаунт</h1>
-            <p className="text-gray-600">Присоединяйтесь к AI Assistant</p>
+        <Card>
+          <div className="text-center">
+            <h1 className="text-2xl font-semibold text-gray-900">Создать аккаунт</h1>
+            <p className="text-gray-600 mt-1 text-sm">Присоединяйтесь к AI Assistant</p>
           </div>
 
           {/* Success Message */}
@@ -190,7 +184,7 @@ export default function RegisterPage() {
               </Link>
             </p>
           </div>
-        </div>
+        </Card>
       </motion.div>
     </div>
   );
