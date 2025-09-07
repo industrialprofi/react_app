@@ -1,14 +1,35 @@
+// Polyfill fetch/Request/Response for MSW and browser-like APIs
+import 'whatwg-fetch';
+
 // Import the jest-dom library for custom matchers
 import '@testing-library/jest-dom';
 
-// Mock next/navigation
+// Polyfill TextEncoder/TextDecoder for Node
+import { TextEncoder, TextDecoder } from 'util';
+// @ts-ignore
+if (!global.TextEncoder) {
+  // @ts-ignore
+  global.TextEncoder = TextEncoder;
+}
+// @ts-ignore
+if (!global.TextDecoder) {
+  // @ts-ignore
+  global.TextDecoder = TextDecoder;
+}
+
+// Mock next/navigation with a stable singleton router for assertions
+const __mockRouter = {
+  push: jest.fn(),
+  replace: jest.fn(),
+  prefetch: jest.fn(),
+};
+// expose for tests
+// @ts-ignore
+globalThis.__mockRouter = __mockRouter;
+
 jest.mock('next/navigation', () => ({
   useRouter() {
-    return {
-      push: jest.fn(),
-      replace: jest.fn(),
-      prefetch: jest.fn(),
-    };
+    return __mockRouter;
   },
   useSearchParams() {
     return new URLSearchParams();
@@ -22,14 +43,18 @@ jest.mock('next/navigation', () => ({
 }));
 
 // Mock next-auth/react
-jest.mock('next-auth/react', () => ({
-  useSession: jest.fn(() => ({
-    data: null,
-    status: 'unauthenticated',
-  })),
-  signIn: jest.fn(),
-  signOut: jest.fn(),
-}));
+jest.mock(
+  'next-auth/react',
+  () => ({
+    useSession: jest.fn(() => ({
+      data: null,
+      status: 'unauthenticated',
+    })),
+    signIn: jest.fn(),
+    signOut: jest.fn(),
+  }),
+  { virtual: true }
+);
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
@@ -53,7 +78,7 @@ window.scrollTo = jest.fn();
 jest.mock('next/head', () => {
   return {
     __esModule: true,
-    default: ({ children }: { children: Array<React.ReactElement> }) => {
+    default: ({ children }) => {
       return <>{children}</>;
     },
   };
@@ -61,7 +86,7 @@ jest.mock('next/head', () => {
 
 // Mock next/link
 jest.mock('next/link', () => {
-  return ({ children, href, ...rest }: { children: React.ReactNode; href: string }) => {
+  return ({ children, href, ...rest }) => {
     return (
       <a href={href} {...rest}>
         {children}
@@ -72,17 +97,7 @@ jest.mock('next/link', () => {
 
 // Mock next/image
 jest.mock('next/image', () => {
-  return function Image({
-    src,
-    alt,
-    width,
-    height,
-  }: {
-    src: string;
-    alt: string;
-    width: number;
-    height: number;
-  }) {
+  return function Image({ src, alt, width, height }) {
     return (
       <img
         src={src}

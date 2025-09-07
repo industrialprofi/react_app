@@ -34,7 +34,7 @@ const config = {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!(react-markdown|vfile|vfile-message|markdown-table|unist-util-stringify-position|unified|bail|is-plain-obj|trough|trim-lines|property-information|hast-util-whitespace|space-separated-tokens|comma-separated-tokens|rehype-parse|hast-util-from-parse5|hast-util-parse-selector|hast-to-hyperscript|hast-util-to-parse5|hastscript|web-namespaces|zwitch|hast-util-raw)/.*',
+    'node_modules/(?!(react-markdown|vfile|vfile-message|markdown-table|unist-util-stringify-position|unified|bail|is-plain-obj|trough|trim-lines|property-information|hast-util-whitespace|space-separated-tokens|comma-separated-tokens|rehype-parse|hast-util-from-parse5|hast-util-parse-selector|hast-to-hyperscript|hast-util-to-parse5|hastscript|web-namespaces|zwitch|hast-util-raw)/)'
   ],
   globals: {
     'ts-jest': {

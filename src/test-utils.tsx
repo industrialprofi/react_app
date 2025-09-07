@@ -1,7 +1,5 @@
 import React, { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
-import { AppRouterContextProviderMock } from './test-utils/app-router-context-provider-mock';
-import { ThemeProvider } from 'next-themes';
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
@@ -30,22 +28,10 @@ jest.mock('next-auth/react', () => ({
   signOut: jest.fn(),
 }));
 
-type CustomRenderOptions = Omit<RenderOptions, 'wrapper'> & {
-  router?: Partial<React.ComponentProps<typeof AppRouterContextProviderMock>>;
-};
+type CustomRenderOptions = Omit<RenderOptions, 'wrapper'>;
 
-const customRender = (
-  ui: ReactElement,
-  { router, ...options }: CustomRenderOptions = {}
-) => {
-  const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <ThemeProvider attribute="class" defaultTheme="light">
-      <AppRouterContextProviderMock {...router}>
-        {children}
-      </AppRouterContextProviderMock>
-    </ThemeProvider>
-  );
-
+const customRender = (ui: ReactElement, options: CustomRenderOptions = {}) => {
+  const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => <>{children}</>;
   return render(ui, { wrapper: Wrapper, ...options });
 };
 

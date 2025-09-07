@@ -1,34 +1,13 @@
-import React, { type ReactNode, useMemo } from 'react';
-import {
-  AppRouterContext,
-  type AppRouterInstance,
-} from 'next/dist/shared/lib/app-router-context';
+import React, { type ReactNode } from 'react';
 
-interface AppRouterContextProviderMockProps {
-  router?: Partial<AppRouterInstance>;
+type Props = {
   children: ReactNode;
-}
+  // Keep API compatible, but unused now
+  router?: Record<string, unknown>;
+};
 
-export function AppRouterContextProviderMock({
-  router,
-  children,
-}: AppRouterContextProviderMockProps): React.ReactNode {
-  const mockedRouter: AppRouterInstance = useMemo(
-    () => ({
-      back: jest.fn(),
-      forward: jest.fn(),
-      push: jest.fn(),
-      replace: jest.fn(),
-      refresh: jest.fn(),
-      prefetch: jest.fn(),
-      ...router,
-    }),
-    [router]
-  );
-
-  return (
-    <AppRouterContext.Provider value={mockedRouter}>
-      {children}
-    </AppRouterContext.Provider>
-  );
+export function AppRouterContextProviderMock({ children }: Props): React.ReactNode {
+  // We rely on global jest.setup.js mocks for next/navigation.
+  // This component is now a simple pass-through to avoid importing Next internals.
+  return <>{children}</>;
 }
