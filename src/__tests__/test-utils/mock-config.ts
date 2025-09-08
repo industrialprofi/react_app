@@ -8,3 +8,10 @@ export const TEST_USER = {
   is_superuser: false,
   created_at: new Date().toISOString(),
 };
+
+// Simple test to prevent "no tests" error
+describe('Mock Config', () => {
+  it('exports API_BASE_URL', () => {
+    expect(API_BASE_URL).toBe('http://localhost:8000');
+  });
+});

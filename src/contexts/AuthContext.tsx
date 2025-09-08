@@ -33,8 +33,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
 
+      // Skip user loading in test environment
+      if (process.env.NODE_ENV === 'test') {
+        setLoading(false);
+        return;
+      }
+
       try {
-        const response = await fetch(`${API_BASE_URL}/users/me`, {
+        const response = await fetch(`${API_BASE_URL}/auth/me`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },

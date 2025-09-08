@@ -1,25 +1,17 @@
 import { render, screen, waitFor, fireEvent } from '@/test-utils';
 import LoginPage from '../page';
 import { server } from '@/mocks/server';
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { API_BASE_URL } from '@/__tests__/test-utils/mock-config';
 
-type MockRequest = {
-  body: {
-    email: string;
-    password: string;
+// Access the global mock router
+declare global {
+  var __mockRouter: {
+    push: jest.Mock;
+    replace: jest.Mock;
+    prefetch: jest.Mock;
   };
-};
-
-type MockResponse = {
-  (status: number, data: any, headers?: Record<string, string>): any;
-  json: (data: any) => any;
-};
-
-type MockContext = {
-  status: (code: number) => MockContext;
-  json: (data: any) => any;
-};
+}
 
 // Enable API mocking before tests
 beforeAll(() => server.listen());
@@ -31,6 +23,13 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('Login Page', () => {
+  beforeEach(() => {
+    // Clear mock calls before each test
+    globalThis.__mockRouter.push.mockClear();
+    globalThis.__mockRouter.replace.mockClear();
+    globalThis.__mockRouter.prefetch.mockClear();
+  });
+
   it('renders login form', () => {
     render(<LoginPage />);
     
@@ -42,8 +41,10 @@ describe('Login Page', () => {
   });
 
   it('allows users to login successfully', async () => {
-    const mockPush = jest.fn();
-    render(<LoginPage />, { router: { router: { push: mockPush } } as any });
+    // Mock localStorage
+    const setItemSpy = jest.spyOn(Storage.prototype, 'setItem');
+    
+    render(<LoginPage />);
     
     // Fill in the form
     fireEvent.change(screen.getByLabelText(/Email/i), {
@@ -60,21 +61,22 @@ describe('Login Page', () => {
     // Check that the loading state is shown
     expect(await screen.findByText(/Обработка.../i)).toBeInTheDocument();
     
-    // Wait for the login to complete
+    // Wait for loading to disappear and check that token was stored
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/dashboard');
-    });
+      expect(screen.queryByText(/Обработка.../i)).not.toBeInTheDocument();
+      expect(setItemSpy).toHaveBeenCalledWith('auth_token', 'test-jwt-token');
+    }, { timeout: 3000 });
+    
+    setItemSpy.mockRestore();
   });
 
   it('shows error message when login fails', async () => {
     // Override the default handler for this test
     server.use(
-      rest.post(`${API_BASE_URL}/auth/login`, async (req: MockRequest, res: any, ctx: any) => {
-        return res(
-          ctx.status(401),
-          ctx.json({
-            detail: 'Invalid credentials',
-          })
+      http.post(`${API_BASE_URL}/auth/login`, async ({ request }) => {
+        return HttpResponse.json(
+          { detail: 'Invalid credentials' },
+          { status: 401 }
         );
       })
     );

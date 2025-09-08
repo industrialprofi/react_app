@@ -4,8 +4,26 @@ import 'whatwg-fetch';
 // Import the jest-dom library for custom matchers
 import '@testing-library/jest-dom';
 
+// Polyfill BroadcastChannel for MSW v2
+class BroadcastChannelPolyfill {
+  constructor(name) {
+    this.name = name;
+  }
+  postMessage() {}
+  addEventListener() {}
+  removeEventListener() {}
+  close() {}
+}
+
+// @ts-ignore
+if (!global.BroadcastChannel) {
+  // @ts-ignore
+  global.BroadcastChannel = BroadcastChannelPolyfill;
+}
+
 // Polyfill TextEncoder/TextDecoder for Node
 import { TextEncoder, TextDecoder } from 'util';
+import { TransformStream, ReadableStream, WritableStream } from 'stream/web';
 // @ts-ignore
 if (!global.TextEncoder) {
   // @ts-ignore
@@ -15,6 +33,23 @@ if (!global.TextEncoder) {
 if (!global.TextDecoder) {
   // @ts-ignore
   global.TextDecoder = TextDecoder;
+}
+
+// Polyfill Web Streams (Node < 18 compatibility for some libs)
+// @ts-ignore
+if (!global.TransformStream) {
+  // @ts-ignore
+  global.TransformStream = TransformStream;
+}
+// @ts-ignore
+if (!global.ReadableStream) {
+  // @ts-ignore
+  global.ReadableStream = ReadableStream;
+}
+// @ts-ignore
+if (!global.WritableStream) {
+  // @ts-ignore
+  global.WritableStream = WritableStream;
 }
 
 // Mock next/navigation with a stable singleton router for assertions
@@ -28,17 +63,13 @@ const __mockRouter = {
 globalThis.__mockRouter = __mockRouter;
 
 jest.mock('next/navigation', () => ({
-  useRouter() {
-    return __mockRouter;
-  },
-  useSearchParams() {
+  useRouter: () => globalThis.__mockRouter,
+  useParams: () => ({ id: 'test-id' }),
+  useSearchParams: () => {
     return new URLSearchParams();
   },
-  usePathname() {
+  usePathname: () => {
     return '/';
-  },
-  useParams() {
-    return {};
   },
 }));
 

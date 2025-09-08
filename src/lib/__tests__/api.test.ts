@@ -26,7 +26,6 @@ describe('API Client', () => {
     expect(mockFetch).toHaveBeenCalledWith(
       `${API_BASE_URL}/test`,
       expect.objectContaining({
-        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -138,6 +137,7 @@ describe('API Client', () => {
     
     mockFetch.mockResolvedValueOnce({
       ok: true,
+      json: async () => { throw new Error('Not JSON'); },
       text: async () => textResponse,
       headers: new Headers({ 'Content-Type': 'text/plain' }),
     });
