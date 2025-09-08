@@ -1,5 +1,83 @@
 import config from './config';
 
+export const API_BASE_URL = config.API_BASE_URL;
+
+// Helper functions for auth token management
+export const setAuthToken = (token: string) => {
+  localStorage.setItem('auth_token', token);};
+
+export const clearAuthToken = () => {
+  localStorage.removeItem('auth_token');};
+
+// API client with common fetch wrapper
+export const api = {
+  get: async <T>(url: string): Promise<T> => {
+    const response = await fetch(`${API_BASE_URL}${url}`, {
+      headers: getAuthHeaders(),
+    });
+    return handleResponse<T>(response);
+  },
+
+  post: async <T>(url: string, data: any): Promise<T> => {
+    const response = await fetch(`${API_BASE_URL}${url}`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return handleResponse<T>(response);
+  },
+
+  patch: async <T>(url: string, data: any): Promise<T> => {
+    const response = await fetch(`${API_BASE_URL}${url}`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return handleResponse<T>(response);
+  },
+
+  delete: async <T = void>(url: string): Promise<T> => {
+    const response = await fetch(`${API_BASE_URL}${url}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    return handleResponse<T>(response);
+  },
+};
+
+// Helper function to handle API responses
+async function handleResponse<T>(response: Response): Promise<T> {
+  if (!response.ok) {
+    let errorMessage = 'An error occurred';
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.detail || errorData.message || JSON.stringify(errorData);
+      
+      // Clear auth token on 401 Unauthorized
+      if (response.status === 401) {
+        clearAuthToken();
+      }
+    } catch (e) {
+      // If response is not JSON, use status text
+      errorMessage = response.statusText;
+    }
+    throw new Error(errorMessage);
+  }
+
+  // For 204 No Content responses
+  if (response.status === 204) {
+    return undefined as unknown as T;
+  }
+
+  // Try to parse JSON, fall back to text if not JSON
+  try {
+    return await response.json();
+  } catch (e) {
+    return (await response.text()) as unknown as T;
+  }
+}
+
+
 // Типы для API
 interface Conversation {
   id: number;
@@ -162,8 +240,19 @@ export const conversationsApi = {
   },
 };
 
-// API для аутентификации (дополнительные функции, не используемые в контексте)
+// API для аутентификации
 export const authApi = {
+  // Login with email and password
+  login: async (email: string, password: string) => {
+    return api.post<{ access_token: string; user: any }>('/auth/login', { email, password });
+  },
+  
+  // Get current user
+  getMe: async () => {
+    return api.get<any>('/users/me');
+  },
+  
+  // Original auth functions
   // Верификация email
   verifyEmail: async (token: string): Promise<{ message: string }> => {
     const response = await fetch(`${config.API_BASE_URL}/auth/verify-email?token=${token}`);
