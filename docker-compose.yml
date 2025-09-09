@@ -1,0 +1,54 @@
+version: "3.9"
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Keep in sync with Dockerfile ARG
+        NODE_VERSION: "20.15.1"
+    container_name: react_app_web
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
+    environment:
+      # Fallbacks if .env.local is missing
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://api:8000}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://api:8000}
+      NODE_ENV: production
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # Optional: development service with hot-reload
+  web-dev:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -c "npm ci && npm run dev"
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    env_file:
+      - .env.local
+    environment:
+      NEXT_TELEMETRY_DISABLED: "1"
+      NODE_ENV: development
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://api:8000}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://api:8000}
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ../fastAPI_app
+      dockerfile: Dockerfile
+    container_name: fastapi_app_api
+    ports:
+      - "8000:8000"
+    restart: unless-stopped

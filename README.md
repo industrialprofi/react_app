@@ -136,33 +136,43 @@ npm run start
   - `npm run start` — запуск production-сервера
   - `npm run lint`, `npm test`, `npm run type-check` — вспомогательные задачи
 
-Если нужна помощь с настройкой backend части или деплоем — дайте знать.
+### 11) Запуск в Docker
 
----
+В репозитории уже есть `Dockerfile`, `.dockerignore` и `docker-compose.yml` (включает фронтенд `web`/`web-dev` и бэкенд `api`).
 
-## Getting Started
+- Продакшн-режим (оптимизированный образ Next.js standalone):
+  ```bash
+  # из директории react_app
+  docker compose up --build api web
+  # После сборки фронтенд: http://localhost:3000, бэкенд: http://localhost:8000
+  ```
 
-First, run the development server:
+- Режим разработки с hot-reload:
+  ```bash
+  docker compose up api web-dev
+  # Фронтенд доступен на http://localhost:3001 (web-dev мапит 3001:3000)
+  # Проект смонтирован как volume, правки обновляются автоматически
+  ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Переменные окружения:
+- Создайте файл `.env.local` рядом с `docker-compose.yml` (в корне `react_app`):
+  ```bash
+  printf "NEXT_PUBLIC_API_BASE_URL=http://localhost:8000\nNEXT_PUBLIC_API_URL=http://localhost:8000\n" > .env.local
+  ```
+  `docker-compose.yml` автоматически подхватит его через `env_file`. Если файл отсутствует, будут использованы дефолтные значения из `environment`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+  Для запуска «фронтенд+бэкенд» внутри Docker Compose фронтенд получит `http://api:8000` (внутреннее имя сервиса) через `environment`. Для локального запуска без Docker используйте `http://localhost:8000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Полезные команды:
+- Остановить и удалить контейнеры:
+  ```bash
+  docker compose down
+  ```
+- Пересобрать образ после изменения зависимостей:
+  ```bash
+  docker compose build web
+  ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Типичные проблемы:
+- Недостаточно прав Docker: добавьте пользователя в группу `docker` или запускайте с `sudo`.
+- Переменные окружения не применились: проверьте, что `.env.local` находится в корне `react_app` и переcоберите контейнер `web`.
